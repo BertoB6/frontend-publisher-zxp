@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesquisa — Publisher ZonaXP</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primaria: #ff00aa;
+      --secundaria: #00aaff;
+      --fundo: #0a0a1a;
+      --cards: #15152a;
+      --texto: #ffffff;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--fundo);
+      min-height: 100vh;
+      color: var(--texto);
+      padding-bottom: 60px;
+    }
+
+    /* HEADER */
+    header {
+      background: rgba(10,10,26,0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 14px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-voltar {
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      color: var(--texto);
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-voltar:hover {
+      border-color: var(--primaria);
+      background: rgba(255,0,170,0.1);
+    }
+    .pesquisa {
+      position: relative;
+      flex: 1;
+    }
+    .pesquisa input {
+      width: 100%;
+      padding: 11px 16px 11px 40px;
+      border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      font-size: 14px;
+      background: rgba(255,255,255,0.04);
+      color: var(--texto);
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .pesquisa input::placeholder {
+      color: rgba(255,255,255,0.35);
+    }
+    .pesquisa input:focus {
+      outline: none;
+      border-color: var(--primaria);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 0 0 3px rgba(255,0,170,0.15);
+    }
+    .pesquisa-icone {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px;
+      color: rgba(255,255,255,0.4);
+      pointer-events: none;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* INFO QUERY */
+    .info-query {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 20px;
+      padding: 0 4px;
+    }
+    .info-query strong {
+      color: var(--secundaria);
+      font-weight: 700;
+    }
+
+    /* SECÇÃO */
+    .secao {
+      margin-bottom: 32px;
+    }
+    .secao-titulo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 14px;
+      padding-left: 4px;
+    }
+    .secao-titulo .contador {
+      background: rgba(255,0,170,0.15);
+      color: var(--primaria);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    /* GRELHA JOGOS */
+    .grelha {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 14px;
+    }
+    @media (max-width: 480px) {
+      .grelha {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+    }
+
+    /* CARD JOGO */
+    .card-jogo {
+      background: var(--cards);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .card-jogo:hover {
+      border-color: rgba(255,0,170,0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px rgba(255,0,170,0.15);
+    }
+    .card-img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      background: #0a0a1a center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      color: rgba(255,255,255,0.15);
+      position: relative;
+    }
+    .card-tag-plataforma {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 3px 8px;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 6px;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: var(--secundaria);
+      text-transform: uppercase;
+    }
+    .card-info {
+      padding: 11px 12px 12px;
+    }
+    .card-nome {
+      font-size: 13.5px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 35px;
+    }
+    .card-rodape {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .card-loja {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      min-width: 0;
+      flex: 1;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .card-loja:hover {
+      color: var(--secundaria);
+    }
+    .card-avatar {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08) center/cover no-repeat;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      overflow: hidden;
+    }
+    .card-loja-nome {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+    }
+    .card-likes {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.8);
+      flex-shrink: 0;
+      padding: 3px 7px;
+      background: rgba(255,0,170,0.1);
+      border-radius: 6px;
+    }
+    .card-likes .coracao { font-size: 10px; }
+
+    /* CARD LOJA */
+    .card-loja-item {
+      background: var(--cards);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .card-loja-item:hover {
+      border-color: rgba(0,170,255,0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 15px rgba(0,170,255,0.1);
+    }
+    .loja-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06) center/cover no-repeat;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: var(--primaria);
+      border: 2px solid rgba(255,255,255,0.08);
+    }
+    .loja-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .loja-nome {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      margin-bottom: 3px;
+      word-break: break-word;
+    }
+    .loja-meta {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      word-break: break-word;
+      line-height: 1.4;
+    }
+    .loja-seta {
+      font-size: 18px;
+      color: rgba(255,255,255,0.3);
+      flex-shrink: 0;
+    }
+
+    /* VAZIO */
+    .vazio {
+      text-align: center;
+      padding: 80px 20px;
+      color: rgba(255,255,255,0.4);
+    }
+    .vazio-emoji {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    .vazio-titulo {
+      font-size: 17px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 6px;
+    }
+    .vazio-txt {
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+    .vazio-txt a {
+      color: var(--secundaria);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* LOADING */
+    .loading {
+      text-align: center;
+      padding: 80px 20px;
+      color: rgba(255,255,255,0.4);
+    }
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(255,255,255,0.08);
+      border-top-color: var(--primaria);
+      border-radius: 50%;
+      animation: girar 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes girar { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <button class="btn-voltar" onclick="window.location.href='/'">←</button>
+      <div class="pesquisa">
+        <span class="pesquisa-icone">🔍</span>
+        <input type="text" id="pesquisaInput" placeholder="Pesquisar jogos, lojas...">
+      </div>
+    </div>
+  </header>
+
+  <div class="container" id="conteudo">
+    <div class="loading">
+      <div class="spinner"></div>
+      A pesquisar...
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // CONFIGURAÇÃO — URL da API
+    // ============================================
+    const API_URL = 'https://publisher-zonaxp.onrender.com';
+
+    const conteudo = document.getElementById('conteudo');
+    const pesquisaInput = document.getElementById('pesquisaInput');
+
+    // Obter query da URL: ?q=texto
+    const params = new URLSearchParams(window.location.search);
+    const query = (params.get('q') || '').trim();
+
+    // Preencher o input com a query
+    pesquisaInput.value = query;
+
+    function escapar(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    /* ---------- Nova pesquisa (atualiza URL) ---------- */
+    pesquisaInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const q = pesquisaInput.value.trim();
+        if (q) window.location.href = '/pesquisa?q=' + encodeURIComponent(q);
+      }
+    });
+
+    /* ---------- Carregar resultados ---------- */
+    async function carregar() {
+      if (!query) {
+        document.title = 'Pesquisa — Publisher ZonaXP';
+        conteudo.innerHTML = `
+          <div class="vazio">
+            <div class="vazio-emoji">🔍</div>
+            <div class="vazio-titulo">Pesquisa algo</div>
+            <div class="vazio-txt">Escreve o nome de um jogo ou loja.</div>
+          </div>
+        `;
+        return;
+      }
+
+      document.title = query + ' — Pesquisa Publisher ZonaXP';
+
+      conteudo.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          A pesquisar "<strong>${escapar(query)}</strong>"...
+        </div>
+      `;
+
+      try {
+        const resp = await fetch(API_URL + '/api/publico/pesquisa?q=' + encodeURIComponent(query));
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mostrarErro('Erro ao pesquisar.');
+          return;
+        }
+
+        renderResultados(data);
+
+      } catch (e) {
+        mostrarErro('Erro de ligação ao servidor.');
+      }
+    }
+
+    function renderResultados(data) {
+      const jogos = data.jogos || [];
+      const lojas = data.lojas || [];
+
+      if (jogos.length === 0 && lojas.length === 0) {
+        conteudo.innerHTML = `
+          <div class="info-query">Nenhum resultado para <strong>"${escapar(query)}"</strong></div>
+          <div class="vazio">
+            <div class="vazio-emoji">😕</div>
+            <div class="vazio-titulo">Sem resultados</div>
+            <div class="vazio-txt">Tenta pesquisar com outro nome.<br><a href="/">Voltar à home</a></div>
+          </div>
+        `;
+        return;
+      }
+
+      let html = `
+        <div class="info-query">
+          Resultados para <strong>"${escapar(query)}"</strong> — 
+          ${jogos.length} ${jogos.length === 1 ? 'jogo' : 'jogos'}, 
+          ${lojas.length} ${lojas.length === 1 ? 'loja' : 'lojas'}
+        </div>
+      `;
+
+      // Jogos
+      if (jogos.length > 0) {
+        html += `
+          <div class="secao">
+            <div class="secao-titulo">
+              📦 Jogos encontrados
+              <span class="contador">${jogos.length}</span>
+            </div>
+            <div class="grelha">
+              ${jogos.map(j => renderCardJogo(j)).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Lojas
+      if (lojas.length > 0) {
+        html += `
+          <div class="secao">
+            <div class="secao-titulo">
+              🏪 Lojas encontradas
+              <span class="contador">${lojas.length}</span>
+            </div>
+            ${lojas.map(l => renderCardLoja(l)).join('')}
+          </div>
+        `;
+      }
+
+      conteudo.innerHTML = html;
+    }
+
+    function renderCardJogo(j) {
+      const avatarHtml = j.avatarLoja
+        ? `<div class="card-avatar" style="background-image:url('${escapar(j.avatarLoja)}')"></div>`
+        : `<div class="card-avatar">${escapar(j.nomeLoja).charAt(0).toUpperCase()}</div>`;
+
+      const imgHtml = j.imagem
+        ? `<div class="card-img" style="background-image:url('${escapar(j.imagem)}')"></div>`
+        : `<div class="card-img">🎮</div>`;
+
+      return `
+        <div class="card-jogo" onclick="irParaJogo('${escapar(j.slug)}')">
+          ${imgHtml}
+          <div class="card-tag-plataforma">${escapar(j.plataforma)}</div>
+          <div class="card-info">
+            <div class="card-nome">${escapar(j.nome)}</div>
+            <div class="card-rodape">
+              <a class="card-loja" href="/loja/${escapar(j.slugLoja)}" onclick="event.stopPropagation()">
+                ${avatarHtml}
+                <span class="card-loja-nome">${escapar(j.nomeLoja)}</span>
+              </a>
+              <div class="card-likes">
+                <span class="coracao">❤️</span>
+                <span>${j.likes || 0}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCardLoja(l) {
+      const avatarHtml = l.avatar
+        ? `<div class="loja-avatar" style="background-image:url('${escapar(l.avatar)}')"></div>`
+        : `<div class="loja-avatar">${escapar(l.nome).charAt(0).toUpperCase()}</div>`;
+
+      const bio = l.bio ? escapar(l.bio) : 'Sem bio.';
+      const jogos = `${l.totalJogos} ${l.totalJogos === 1 ? 'jogo' : 'jogos'}`;
+
+      return `
+        <a class="card-loja-item" href="/loja/${escapar(l.slug)}">
+          ${avatarHtml}
+          <div class="loja-info">
+            <div class="loja-nome">${escapar(l.nome)}</div>
+            <div class="loja-meta">${jogos} · ${bio}</div>
+          </div>
+          <div class="loja-seta">→</div>
+        </a>
+      `;
+    }
+
+    function irParaJogo(slug) {
+      window.location.href = '/jogo/' + slug;
+    }
+
+    function mostrarErro(msg) {
+      conteudo.innerHTML = `
+        <div class="vazio">
+          <div class="vazio-emoji">⚠️</div>
+          <div class="vazio-titulo">Erro</div>
+          <div class="vazio-txt">${escapar(msg)}</div>
+        </div>
+      `;
+    }
+
+    /* ---------- Iniciar ---------- */
+    carregar();
+  </script>
+</body>
+</html>

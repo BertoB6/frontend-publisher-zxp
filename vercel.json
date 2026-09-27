@@ -1,0 +1,13 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/loja/:slug", "destination": "/loja.html" },
+    { "source": "/jogo/:slug", "destination": "/jogo.html" },
+    { "source": "/pesquisa", "destination": "/pesquisa.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/painel/publicar", "destination": "/painel-publicar.html" },
+    { "source": "/painel/loja", "destination": "/painel-loja.html" },
+    { "source": "/painel", "destination": "/painel.html" }
+  ]
+}

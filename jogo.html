@@ -3,37 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>A carregar... — ZonaXP Publishers</title>
+  <title>A carregar... — Publisher ZonaXP</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primaria: #ff00aa;
+      --secundaria: #00aaff;
+      --fundo: #0a0a1a;
+      --cards: #15152a;
+      --texto: #ffffff;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f5f5f7;
+      background: var(--fundo);
       min-height: 100vh;
-      color: #1a1a1a;
+      color: var(--texto);
       padding-bottom: 40px;
+      transition: background 0.3s;
     }
 
     /* HEADER */
     .topo {
-      background: #fff;
-      border-bottom: 1px solid #e8e8e8;
-      padding: 14px 20px;
+      background: rgba(10,10,26,0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 12px 16px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       position: sticky;
       top: 0;
       z-index: 10;
+      transition: background 0.3s;
+    }
+    .btn-voltar {
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      color: var(--texto);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-voltar:hover {
+      border-color: var(--primaria);
+      background: rgba(255,0,170,0.1);
     }
     .topo-brand {
       font-size: 13px;
       font-weight: 700;
-      color: #1a1a1a;
+      color: var(--texto);
       letter-spacing: -0.2px;
+      flex: 1;
     }
     .topo-brand span {
-      color: #999;
+      color: rgba(255,255,255,0.5);
       font-weight: 500;
     }
 
@@ -46,28 +76,29 @@
 
     /* CARD */
     .card {
-      background: #fff;
+      background: var(--cards);
       border-radius: 16px;
-      border: 1px solid #eee;
+      border: 1px solid rgba(255,255,255,0.06);
       overflow: hidden;
+      transition: background 0.3s;
     }
 
-    /* IMAGEM GRANDE */
+    /* HERO */
     .hero {
       width: 100%;
       aspect-ratio: 1/1;
-      background: #f0f0f0 center/cover no-repeat;
+      background: #0a0a1a center/cover no-repeat;
       position: relative;
     }
     .hero-placeholder {
       width: 100%;
       aspect-ratio: 1/1;
-      background: #f0f0f0;
+      background: #0a0a1a;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 64px;
-      color: #ccc;
+      color: rgba(255,255,255,0.15);
     }
 
     /* CONTEÚDO */
@@ -77,15 +108,16 @@
 
     .tag-plataforma {
       display: inline-block;
-      background: #1a1a1a;
+      background: linear-gradient(135deg, var(--primaria), var(--secundaria));
       color: #fff;
       font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
       padding: 4px 10px;
       border-radius: 6px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      box-shadow: 0 0 12px rgba(255,0,170,0.3);
     }
 
     h1 {
@@ -93,22 +125,63 @@
       font-weight: 700;
       letter-spacing: -0.4px;
       line-height: 1.25;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
+      word-break: break-word;
     }
 
-    .categoria {
+    /* LINK LOJA */
+    .link-loja {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       font-size: 13px;
-      color: #888;
-      margin-bottom: 16px;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      padding: 6px 12px 6px 6px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 18px;
+      transition: all 0.2s;
+      max-width: 100%;
+    }
+    .link-loja:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: var(--secundaria);
+      color: var(--secundaria);
+    }
+    .loja-avatar-peq {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08) center/cover no-repeat;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--primaria);
+    }
+    .link-loja-texto {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+    }
+    .link-loja-texto strong {
+      color: var(--texto);
+      font-weight: 700;
     }
 
+    /* DESCRIÇÃO CURTA */
     .desc-curta {
       font-size: 14.5px;
-      color: #444;
+      color: rgba(255,255,255,0.75);
       line-height: 1.5;
       margin-bottom: 20px;
       padding-bottom: 20px;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      word-break: break-word;
     }
 
     /* INFO CARDS */
@@ -119,15 +192,15 @@
       margin-bottom: 20px;
     }
     .info-item {
-      background: #fafafa;
+      background: rgba(255,255,255,0.03);
       border-radius: 10px;
       padding: 12px 14px;
-      border: 1px solid #f0f0f0;
+      border: 1px solid rgba(255,255,255,0.05);
     }
     .info-label {
       font-size: 11px;
-      color: #999;
-      font-weight: 600;
+      color: rgba(255,255,255,0.45);
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.4px;
       margin-bottom: 4px;
@@ -135,21 +208,21 @@
     .info-valor {
       font-size: 15px;
       font-weight: 700;
-      color: #1a1a1a;
+      color: var(--texto);
       word-break: break-word;
     }
 
     /* DESCRIÇÃO LONGA */
     .desc-longa {
-      background: #fafafa;
+      background: rgba(255,255,255,0.03);
       border-radius: 12px;
       padding: 18px;
-      border: 1px solid #f0f0f0;
+      border: 1px solid rgba(255,255,255,0.05);
       margin-bottom: 20px;
     }
     .desc-longa h3 {
       font-size: 12px;
-      color: #999;
+      color: rgba(255,255,255,0.5);
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -158,21 +231,68 @@
     .desc-longa-conteudo {
       font-size: 14px;
       line-height: 1.65;
-      color: #333;
+      color: rgba(255,255,255,0.85);
       white-space: pre-wrap;
       word-wrap: break-word;
       font-family: inherit;
     }
 
-    /* BOTÃO DOWNLOAD */
+    /* AÇÕES */
+    .acoes {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+    }
+    .btn-like {
+      background: rgba(255,0,170,0.1);
+      border: 1.5px solid rgba(255,0,170,0.3);
+      color: var(--primaria);
+      padding: 16px 20px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-like:hover {
+      background: rgba(255,0,170,0.2);
+      transform: translateY(-1px);
+    }
+    .btn-like:active {
+      transform: scale(0.96);
+    }
+    .btn-like.liked {
+      background: var(--primaria);
+      color: #fff;
+      border-color: var(--primaria);
+      box-shadow: 0 0 20px rgba(255,0,170,0.4);
+    }
+    .btn-like .coracao {
+      font-size: 17px;
+      transition: transform 0.2s;
+    }
+    .btn-like.liked .coracao {
+      animation: pulsar 0.4s;
+    }
+    @keyframes pulsar {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.4); }
+    }
+
     .btn-download {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      width: 100%;
       padding: 16px;
-      background: #1a1a1a;
+      background: linear-gradient(135deg, var(--primaria), var(--secundaria));
       color: #fff;
       text-decoration: none;
       border-radius: 12px;
@@ -181,26 +301,29 @@
       transition: all 0.2s;
       text-align: center;
       letter-spacing: -0.2px;
+      box-shadow: 0 4px 16px rgba(255,0,170,0.3);
     }
     .btn-download:hover {
-      background: #000;
+      filter: brightness(1.15);
       transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(255,0,170,0.4);
     }
     .btn-download:active {
       transform: translateY(0);
     }
 
-    /* ERRO 404 */
+    /* ERRO */
     .erro-pagina {
       text-align: center;
       padding: 60px 20px;
-      background: #fff;
+      background: var(--cards);
       border-radius: 16px;
-      border: 1px solid #eee;
+      border: 1px solid rgba(255,255,255,0.06);
     }
     .erro-pagina .emoji {
       font-size: 56px;
       margin-bottom: 12px;
+      opacity: 0.6;
     }
     .erro-pagina h2 {
       font-size: 20px;
@@ -208,45 +331,74 @@
     }
     .erro-pagina p {
       font-size: 14px;
-      color: #888;
+      color: rgba(255,255,255,0.55);
+    }
+    .erro-pagina a {
+      color: var(--secundaria);
+      text-decoration: none;
+      font-weight: 600;
     }
 
-    /* FOOTER */
+    /* RODAPÉ */
     .rodape {
       text-align: center;
-      font-size: 12px;
-      color: #aaa;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.3);
       margin-top: 24px;
       padding: 0 20px;
     }
     .rodape a {
-      color: #666;
+      color: rgba(255,255,255,0.5);
       text-decoration: none;
       font-weight: 600;
+      transition: color 0.15s;
+    }
+    .rodape a:hover {
+      color: var(--primaria);
     }
 
     /* LOADING */
     .loading {
       text-align: center;
       padding: 80px 20px;
-      color: #999;
+      color: rgba(255,255,255,0.4);
     }
     .spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid #eee;
-      border-top-color: #1a1a1a;
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(255,255,255,0.08);
+      border-top-color: var(--primaria);
       border-radius: 50%;
       animation: girar 0.8s linear infinite;
       margin: 0 auto 14px;
     }
     @keyframes girar { to { transform: rotate(360deg); } }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--cards);
+      color: var(--texto);
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: transform 0.3s;
+      z-index: 200;
+      max-width: 90%;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .toast.ativo { transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
 
   <div class="topo">
-    <div class="topo-brand">ZonaXP <span>Publishers</span></div>
+    <button class="btn-voltar" onclick="voltar()">←</button>
+    <div class="topo-brand">Publisher <span>ZonaXP</span></div>
   </div>
 
   <div class="container" id="app">
@@ -256,12 +408,20 @@
     </div>
   </div>
 
+  <div class="toast" id="toast"></div>
+
   <script>
-    // Extrair slug do URL: /jogo/mortal-kombat-mod
+    // ============================================
+    // CONFIGURAÇÃO
+    // ============================================
+    const API_URL = 'https://publisher-zonaxp.onrender.com';
+
     const partes = window.location.pathname.split('/').filter(Boolean);
     const slug = partes[partes.length - 1];
 
     const app = document.getElementById('app');
+    let jogoAtual = null;
+    let jaDeuLike = false;
 
     function escapar(s) {
       return String(s ?? '').replace(/[&<>"']/g, c => ({
@@ -269,13 +429,38 @@
       }[c]));
     }
 
+    function aplicarCores(cores) {
+      const r = document.documentElement.style;
+      r.setProperty('--primaria', cores.primaria);
+      r.setProperty('--secundaria', cores.secundaria);
+      r.setProperty('--fundo', cores.fundo);
+      r.setProperty('--cards', cores.cards);
+      r.setProperty('--texto', cores.texto);
+    }
+
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast ativo';
+      setTimeout(() => t.classList.remove('ativo'), 2500);
+    }
+
+    function voltar() {
+      if (document.referrer && document.referrer.includes(window.location.host)) {
+        window.history.back();
+      } else {
+        window.location.href = '/';
+      }
+    }
+
     function mostrarErro(titulo, msg) {
-      document.title = 'Jogo não encontrado — ZonaXP Publishers';
+      document.title = 'Jogo não encontrado — Publisher ZonaXP';
       app.innerHTML = `
         <div class="erro-pagina">
           <div class="emoji">🔍</div>
           <h2>${titulo}</h2>
           <p>${msg}</p>
+          <p style="margin-top:14px"><a href="/">← Voltar à home</a></p>
         </div>
       `;
     }
@@ -287,7 +472,7 @@
       }
 
       try {
-        const resp = await fetch('/api/publico/jogo/' + encodeURIComponent(slug));
+        const resp = await fetch(API_URL + '/api/publico/jogo/' + encodeURIComponent(slug));
         const data = await resp.json();
 
         if (!resp.ok || !data.ok) {
@@ -295,7 +480,15 @@
           return;
         }
 
-        renderizar(data.jogo);
+        jogoAtual = data.jogo;
+        renderizar(jogoAtual);
+
+        // Verificar se já deu like (localStorage)
+        const likesDados = JSON.parse(localStorage.getItem('likes_dados') || '{}');
+        if (likesDados[slug]) {
+          jaDeuLike = true;
+          document.getElementById('btnLike').classList.add('liked');
+        }
 
       } catch (e) {
         mostrarErro('Erro de ligação', 'Não foi possível contactar o servidor.');
@@ -303,20 +496,32 @@
     }
 
     function renderizar(j) {
-      document.title = j.nome + ' — ZonaXP Publishers';
+      document.title = j.nome + ' — Publisher ZonaXP';
+
+      // Aplicar cores da loja
+      if (j.coresLoja) aplicarCores(j.coresLoja);
 
       const heroHtml = j.imagem
         ? `<div class="hero" style="background-image:url('${escapar(j.imagem)}')"></div>`
         : `<div class="hero-placeholder">🎮</div>`;
+
+      const avatarLojaHtml = j.avatarLoja
+        ? `<div class="loja-avatar-peq" style="background-image:url('${escapar(j.avatarLoja)}')"></div>`
+        : `<div class="loja-avatar-peq">${escapar(j.nomeLoja).charAt(0).toUpperCase()}</div>`;
 
       app.innerHTML = `
         <div class="card">
           ${heroHtml}
           <div class="conteudo">
 
-            <div class="tag-plataforma">${escapar(j.plataforma)}</div>
+            <div class="tag-plataforma">${escapar(j.plataforma)} · ${escapar(j.categoria)}</div>
             <h1>${escapar(j.nome)}</h1>
-            <div class="categoria">${escapar(j.categoria)}</div>
+
+            <a class="link-loja" href="/loja/${escapar(j.slugLoja)}">
+              ${avatarLojaHtml}
+              <span class="link-loja-texto">por <strong>${escapar(j.nomeLoja)}</strong></span>
+              <span style="font-size:14px">→</span>
+            </a>
 
             <div class="desc-curta">${escapar(j.descricao_curta)}</div>
 
@@ -338,17 +543,67 @@
               </div>
             ` : ''}
 
-            <a class="btn-download" href="${escapar(j.download)}" target="_blank" rel="noopener">
-              ⬇️ Descarregar
-            </a>
+            <div class="acoes">
+              <button class="btn-like" id="btnLike" onclick="darLike()">
+                <span class="coracao">❤️</span>
+                <span id="likesContador">${j.likes || 0}</span>
+              </button>
+              <a class="btn-download" href="${escapar(j.download)}" target="_blank" rel="noopener">
+                ⬇️ Descarregar
+              </a>
+            </div>
 
           </div>
         </div>
 
         <div class="rodape">
-          Publicado via <a href="/loja/zonaxp-membro" target="_blank">ZonaXP Publishers</a>
+          Publicado via <a href="/">Publisher ZonaXP</a>
         </div>
       `;
+    }
+
+    async function darLike() {
+      if (jaDeuLike) {
+        toast('Já deste like neste jogo.');
+        return;
+      }
+
+      const btn = document.getElementById('btnLike');
+      const contador = document.getElementById('likesContador');
+
+      // UI otimista (atualiza logo)
+      btn.classList.add('liked');
+      contador.textContent = (parseInt(contador.textContent) || 0) + 1;
+      jaDeuLike = true;
+
+      try {
+        const resp = await fetch(API_URL + '/api/publico/jogo/' + encodeURIComponent(slug) + '/like', {
+          method: 'POST',
+        });
+        const data = await resp.json();
+
+        if (resp.ok && data.ok) {
+          contador.textContent = data.likes;
+
+          // Guardar no localStorage
+          const likesDados = JSON.parse(localStorage.getItem('likes_dados') || '{}');
+          likesDados[slug] = true;
+          localStorage.setItem('likes_dados', JSON.stringify(likesDados));
+
+          toast('Obrigado pelo like! ❤️');
+        } else {
+          // Reverter se falhou
+          btn.classList.remove('liked');
+          contador.textContent = (parseInt(contador.textContent) || 1) - 1;
+          jaDeuLike = false;
+          toast('Erro ao dar like.');
+        }
+      } catch (e) {
+        btn.classList.remove('liked');
+        contador.textContent = (parseInt(contador.textContent) || 1) - 1;
+        jaDeuLike = false;
+        toast('Erro de ligação.');
+      }
     }
 
     carregar();

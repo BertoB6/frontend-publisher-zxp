@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurar Loja — Publisher ZonaXP</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primaria: #ff00aa;
+      --secundaria: #00aaff;
+      --fundo: #0a0a1a;
+      --cards: #1a1a2e;
+      --texto: #ffffff;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--fundo);
+      min-height: 100vh;
+      color: var(--texto);
+      padding-bottom: 60px;
+      transition: background 0.3s;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--cards);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      transition: background 0.3s;
+    }
+    .btn-voltar {
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      color: var(--texto);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .btn-voltar:hover {
+      border-color: var(--primaria);
+    }
+    header h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* PREVIEW */
+    .preview-titulo {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+    .preview {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 24px;
+      transition: background 0.3s;
+    }
+    .preview-capa {
+      height: 100px;
+      background: linear-gradient(135deg, var(--primaria), var(--secundaria));
+      background-size: cover;
+      background-position: center;
+      transition: background 0.3s;
+    }
+    .preview-corpo {
+      padding: 16px 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .preview-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--cards);
+      border: 3px solid var(--cards);
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+      margin-top: -32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--primaria);
+      transition: border-color 0.3s;
+    }
+    .preview-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .preview-nome {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+    .preview-bio {
+      font-size: 13px;
+      opacity: 0.7;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+    .preview-tag {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 3px 8px;
+      background: var(--primaria);
+      color: #fff;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--cards);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: background 0.3s;
+    }
+    .card-titulo {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* CAMPOS */
+    .campo {
+      margin-bottom: 16px;
+    }
+    .campo:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"], input[type="url"], textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      font-size: 14px;
+      background: rgba(0,0,0,0.25);
+      color: var(--texto);
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primaria);
+      background: rgba(0,0,0,0.4);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+      line-height: 1.5;
+    }
+
+    /* CORES */
+    .cor-linha {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .cor-linha:last-of-type { margin-bottom: 16px; }
+    .cor-linha label {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    .cor-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    input[type="color"] {
+      width: 48px;
+      height: 40px;
+      border: 2px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      background: transparent;
+      cursor: pointer;
+      padding: 2px;
+    }
+    input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 6px;
+    }
+    .cor-hex {
+      width: 90px !important;
+      padding: 9px 10px !important;
+      font-family: ui-monospace, monospace !important;
+      font-size: 13px !important;
+      text-transform: lowercase;
+      text-align: center;
+    }
+
+    /* BOTÕES */
+    .btn-repor {
+      background: transparent;
+      border: 1.5px dashed rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+      width: 100%;
+    }
+    .btn-repor:hover {
+      border-color: var(--secundaria);
+      color: var(--secundaria);
+    }
+
+    .acoes {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .acoes button {
+      flex: 1;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      border: none;
+      transition: all 0.15s;
+    }
+    .btn-cancelar {
+      background: rgba(255,255,255,0.08);
+      color: var(--texto);
+    }
+    .btn-cancelar:hover {
+      background: rgba(255,255,255,0.15);
+    }
+    .btn-guardar {
+      background: var(--primaria);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255,0,170,0.3);
+    }
+    .btn-guardar:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+    }
+    .btn-guardar:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* LINK LOJA */
+    .ver-loja {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: var(--secundaria);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px;
+      border-radius: 10px;
+      transition: all 0.15s;
+    }
+    .ver-loja:hover {
+      background: rgba(0,170,255,0.1);
+    }
+
+    /* ERRO */
+    .erro {
+      background: rgba(255,0,0,0.15);
+      border: 1px solid rgba(255,80,80,0.4);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #ff8888;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .erro.ativo { display: block; }
+
+    /* LOADING */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(255,255,255,0.5);
+    }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--primaria);
+      border-radius: 50%;
+      animation: girar 0.8s linear infinite;
+      margin: 0 auto 14px;
+    }
+    @keyframes girar { to { transform: rotate(360deg); } }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--cards);
+      color: var(--texto);
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: transform 0.3s;
+      z-index: 200;
+      max-width: 90%;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .toast.ativo { transform: translateX(-50%) translateY(0); }
+    .toast.erro {
+      background: #d00;
+      border-color: #d00;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <button class="btn-voltar" onclick="window.location.href='/painel'">←</button>
+    <h1>⚙️ Configurar loja</h1>
+  </header>
+
+  <div class="container" id="app">
+    <div class="loading">
+      <div class="spinner"></div>
+      A carregar loja...
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ============================================
+    // CONFIGURAÇÃO — URL da API
+    // ============================================
+    // LOCAL:      'http://localhost:3001'
+    // PRODUÇÃO:   'https://publisher-zonaxp.onrender.com'
+    const API_URL = 'https://publisher-zonaxp.onrender.com';
+
+    const CORES_ZONAXP = {
+      primaria: '#ff00aa',
+      secundaria: '#00aaff',
+      fundo: '#0a0a1a',
+      cards: '#1a1a2e',
+      texto: '#ffffff',
+    };
+
+    const TOKEN = localStorage.getItem('publisher_token');
+    if (!TOKEN) window.location.href = '/login';
+
+    const app = document.getElementById('app');
+    let lojaOriginal = null;
+
+    /* ---------- Toast ---------- */
+    function toast(msg, erro = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast ativo' + (erro ? ' erro' : '');
+      setTimeout(() => t.classList.remove('ativo'), 2500);
+    }
+
+    function escapar(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    /* ---------- Aplicar cores (CSS vars) ---------- */
+    function aplicarCores(cores) {
+      const r = document.documentElement.style;
+      r.setProperty('--primaria', cores.primaria);
+      r.setProperty('--secundaria', cores.secundaria);
+      r.setProperty('--fundo', cores.fundo);
+      r.setProperty('--cards', cores.cards);
+      r.setProperty('--texto', cores.texto);
+    }
+
+    /* ---------- Render ---------- */
+    function render(loja) {
+      lojaOriginal = JSON.parse(JSON.stringify(loja));
+      aplicarCores(loja.cores);
+
+      app.innerHTML = `
+        <div class="preview-titulo">Pré-visualização</div>
+        <div class="preview" id="preview">
+          <div class="preview-capa" id="prevCapa" ${loja.capa ? `style="background-image:url('${escapar(loja.capa)}')"` : ''}></div>
+          <div class="preview-corpo">
+            <div class="preview-avatar" id="prevAvatar" ${loja.avatar ? `style="background-image:url('${escapar(loja.avatar)}')"` : ''}>
+              ${loja.avatar ? '' : '🎮'}
+            </div>
+            <div class="preview-info">
+              <div class="preview-nome" id="prevNome">${escapar(loja.nome)}</div>
+              <div class="preview-bio" id="prevBio">${escapar(loja.bio || 'Sem bio ainda.')}</div>
+              <div class="preview-tag" id="prevTag">Publisher ZonaXP</div>
+            </div>
+          </div>
+        </div>
+
+        <form id="formLoja">
+
+          <div class="card">
+            <div class="card-titulo">📝 Informações básicas</div>
+
+            <div class="campo">
+              <label>Nome da loja</label>
+              <input type="text" id="nome" value="${escapar(loja.nome)}" maxlength="60" required>
+            </div>
+
+            <div class="campo">
+              <label>Bio (descrição curta)</label>
+              <textarea id="bio" maxlength="200" placeholder="Ex: Mods de PSP e PS2 desde 2020">${escapar(loja.bio || '')}</textarea>
+            </div>
+
+            <div class="campo">
+              <label>WhatsApp</label>
+              <input type="text" id="whatsapp" value="${escapar(loja.whatsapp || '')}" placeholder="Ex: 841234567">
+            </div>
+
+            <div class="campo">
+              <label>Avatar (URL da imagem)</label>
+              <input type="url" id="avatar" value="${escapar(loja.avatar || '')}" placeholder="https://..." oninput="atualizarPreview()">
+            </div>
+
+            <div class="campo">
+              <label>Capa (URL da imagem)</label>
+              <input type="url" id="capa" value="${escapar(loja.capa || '')}" placeholder="https://..." oninput="atualizarPreview()">
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-titulo">🎨 Cores personalizadas</div>
+
+            ${renderCor('primaria', 'Cor primária', loja.cores.primaria)}
+            ${renderCor('secundaria', 'Cor secundária', loja.cores.secundaria)}
+            ${renderCor('fundo', 'Cor de fundo', loja.cores.fundo)}
+            ${renderCor('cards', 'Cor dos cards', loja.cores.cards)}
+            ${renderCor('texto', 'Cor do texto', loja.cores.texto)}
+
+            <button type="button" class="btn-repor" onclick="reporZonaXP()">↺ Repor cores ZonaXP</button>
+          </div>
+
+          <div class="erro" id="erro"></div>
+
+          <div class="acoes">
+            <button type="button" class="btn-cancelar" onclick="window.location.href='/painel'">Cancelar</button>
+            <button type="submit" class="btn-guardar" id="btnGuardar">Guardar</button>
+          </div>
+
+          <a class="ver-loja" id="linkLoja" href="#" target="_blank">
+            🔗 Ver a minha loja pública
+          </a>
+        </form>
+      `;
+
+      // Atualizar link da loja
+      atualizarLinkLoja(loja.slug);
+
+      // Event listeners para cores
+      ['primaria','secundaria','fundo','cards','texto'].forEach(c => {
+        document.getElementById('cor_' + c).addEventListener('input', e => {
+          document.getElementById('hex_' + c).value = e.target.value;
+          atualizarCores();
+        });
+        document.getElementById('hex_' + c).addEventListener('input', e => {
+          const v = e.target.value.trim();
+          if (/^#[0-9a-fA-F]{6}$/.test(v)) {
+            document.getElementById('cor_' + c).value = v;
+            atualizarCores();
+          }
+        });
+      });
+
+      document.getElementById('formLoja').addEventListener('submit', guardar);
+    }
+
+    function renderCor(id, label, valor) {
+      return `
+        <div class="cor-linha">
+          <label>${label}</label>
+          <div class="cor-input-wrap">
+            <input type="color" id="cor_${id}" value="${valor}">
+            <input type="text" class="cor-hex" id="hex_${id}" value="${valor}" maxlength="7">
+          </div>
+        </div>
+      `;
+    }
+
+    /* ---------- Atualizar preview em tempo real ---------- */
+    function atualizarCores() {
+      const cores = {
+        primaria: document.getElementById('cor_primaria').value,
+        secundaria: document.getElementById('cor_secundaria').value,
+        fundo: document.getElementById('cor_fundo').value,
+        cards: document.getElementById('cor_cards').value,
+        texto: document.getElementById('cor_texto').value,
+      };
+      aplicarCores(cores);
+    }
+
+    function atualizarPreview() {
+      const avatar = document.getElementById('avatar').value.trim();
+      const capa = document.getElementById('capa').value.trim();
+      const nome = document.getElementById('nome').value.trim() || 'Nome da loja';
+      const bio = document.getElementById('bio').value.trim() || 'Sem bio ainda.';
+
+      const prevAvatar = document.getElementById('prevAvatar');
+      const prevCapa = document.getElementById('prevCapa');
+
+      prevNome.textContent = nome;
+      prevBio.textContent = bio;
+
+      if (avatar) {
+        prevAvatar.style.backgroundImage = `url('${avatar}')`;
+        prevAvatar.textContent = '';
+      } else {
+        prevAvatar.style.backgroundImage = '';
+        prevAvatar.textContent = '🎮';
+      }
+
+      if (capa) {
+        prevCapa.style.backgroundImage = `url('${capa}')`;
+      } else {
+        prevCapa.style.backgroundImage = '';
+      }
+
+      // Atualizar link da loja quando o nome muda
+      const slugPreview = gerarSlug(nome);
+      atualizarLinkLoja(slugPreview);
+    }
+
+    function gerarSlug(texto) {
+      return String(texto)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+    }
+
+    function atualizarLinkLoja(slug) {
+      if (!slug) return;
+      const link = document.getElementById('linkLoja');
+      if (link) link.href = '/loja/' + slug;
+    }
+
+    function reporZonaXP() {
+      Object.keys(CORES_ZONAXP).forEach(c => {
+        document.getElementById('cor_' + c).value = CORES_ZONAXP[c];
+        document.getElementById('hex_' + c).value = CORES_ZONAXP[c];
+      });
+      atualizarCores();
+      toast('Cores ZonaXP repostas.');
+    }
+
+    /* ---------- Carregar loja ---------- */
+    async function carregar() {
+      try {
+        const resp = await fetch(API_URL + '/api/publisher/loja', {
+          headers: { 'Authorization': 'Bearer ' + TOKEN }
+        });
+
+        if (resp.status === 401) {
+          localStorage.clear();
+          window.location.href = '/login';
+          return;
+        }
+
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) {
+          app.innerHTML = '<div class="loading">❌ Erro ao carregar loja</div>';
+          return;
+        }
+
+        render(data.loja);
+      } catch (e) {
+        app.innerHTML = '<div class="loading">❌ Erro de ligação</div>';
+      }
+    }
+
+    /* ---------- Guardar ---------- */
+    async function guardar(e) {
+      e.preventDefault();
+      const erroBox = document.getElementById('erro');
+      erroBox.classList.remove('ativo');
+
+      const btn = document.getElementById('btnGuardar');
+      btn.disabled = true;
+      btn.textContent = 'A guardar...';
+
+      const dados = {
+        nome: document.getElementById('nome').value.trim(),
+        bio: document.getElementById('bio').value.trim(),
+        whatsapp: document.getElementById('whatsapp').value.trim(),
+        avatar: document.getElementById('avatar').value.trim(),
+        capa: document.getElementById('capa').value.trim(),
+        cores: {
+          primaria: document.getElementById('cor_primaria').value,
+          secundaria: document.getElementById('cor_secundaria').value,
+          fundo: document.getElementById('cor_fundo').value,
+          cards: document.getElementById('cor_cards').value,
+          texto: document.getElementById('cor_texto').value,
+        },
+      };
+
+      try {
+        const resp = await fetch(API_URL + '/api/publisher/loja', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + TOKEN,
+          },
+          body: JSON.stringify(dados),
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          erroBox.textContent = data.erro || 'Erro ao guardar.';
+          erroBox.classList.add('ativo');
+          btn.disabled = false;
+          btn.textContent = 'Guardar';
+          return;
+        }
+
+        toast('Loja atualizada!');
+        // Recarregar para atualizar slug/link
+        setTimeout(() => carregar(), 700);
+
+      } catch (err) {
+        erroBox.textContent = 'Erro de ligação.';
+        erroBox.classList.add('ativo');
+        btn.disabled = false;
+        btn.textContent = 'Guardar';
+      }
+    }
+
+    // Ligar os previews ao vivo nos inputs de texto
+    document.addEventListener('input', e => {
+      if (['nome','bio','avatar','capa'].includes(e.target.id)) {
+        atualizarPreview();
+      }
+    });
+
+    carregar();
+  </script>
+</body>
+</html>

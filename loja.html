@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A carregar... — ZonaXP Publishers</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f7;
+      min-height: 100vh;
+      color: #1a1a1a;
+      padding-bottom: 40px;
+    }
+
+    /* HEADER */
+    header {
+      background: #fff;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .container-topo {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .brand {
+      font-size: 11px;
+      color: #999;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 6px;
+    }
+    .nome-loja {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      line-height: 1.2;
+    }
+    .bio-loja {
+      font-size: 13.5px;
+      color: #666;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+    .contador {
+      display: inline-block;
+      background: #f0f0f0;
+      color: #666;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* GRELHA */
+    .grelha {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px;
+    }
+    @media (max-width: 480px) {
+      .grelha {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+    }
+
+    /* CARD JOGO */
+    .card-jogo {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid #eee;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: all 0.2s;
+    }
+    .card-jogo:hover {
+      border-color: #ccc;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+    .card-img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      background: #f0f0f0 center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      color: #ccc;
+    }
+    .card-info {
+      padding: 12px;
+    }
+    .card-nome {
+      font-size: 13.5px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 5px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-meta {
+      font-size: 11px;
+      color: #999;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .card-tag {
+      display: inline-block;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* VAZIO */
+    .vazio {
+      text-align: center;
+      padding: 80px 20px;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #eee;
+    }
+    .vazio-emoji {
+      font-size: 56px;
+      margin-bottom: 12px;
+    }
+    .vazio-titulo {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .vazio-txt {
+      font-size: 14px;
+      color: #888;
+      line-height: 1.5;
+    }
+
+    /* ERRO */
+    .erro-pagina {
+      text-align: center;
+      padding: 80px 20px;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #eee;
+    }
+    .erro-pagina .emoji {
+      font-size: 56px;
+      margin-bottom: 12px;
+    }
+    .erro-pagina h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .erro-pagina p {
+      font-size: 14px;
+      color: #888;
+    }
+
+    /* LOADING */
+    .loading {
+      text-align: center;
+      padding: 80px 20px;
+      color: #999;
+    }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #eee;
+      border-top-color: #1a1a1a;
+      border-radius: 50%;
+      animation: girar 0.8s linear infinite;
+      margin: 0 auto 14px;
+    }
+    @keyframes girar { to { transform: rotate(360deg); } }
+
+    /* FOOTER */
+    .rodape {
+      text-align: center;
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container-topo" id="header-loja">
+      <div class="brand">ZonaXP Publishers</div>
+      <div class="nome-loja">A carregar...</div>
+    </div>
+  </header>
+
+  <div class="container" id="app">
+    <div class="loading">
+      <div class="spinner"></div>
+      A carregar loja...
+    </div>
+  </div>
+
+  <div class="rodape">
+    Publicado via ZonaXP Publishers
+  </div>
+
+  <script>
+    // Extrair slug do URL: /loja/zonaxp-membro
+    const partes = window.location.pathname.split('/').filter(Boolean);
+    const slug = partes[partes.length - 1];
+
+    const app = document.getElementById('app');
+    const headerLoja = document.getElementById('header-loja');
+
+    function escapar(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    function mostrarErro(titulo, msg) {
+      document.title = 'Loja não encontrada — ZonaXP Publishers';
+      headerLoja.innerHTML = `<div class="brand">ZonaXP Publishers</div><div class="nome-loja">Não encontrada</div>`;
+      app.innerHTML = `
+        <div class="erro-pagina">
+          <div class="emoji">🔍</div>
+          <h2>${titulo}</h2>
+          <p>${msg}</p>
+        </div>
+      `;
+    }
+
+    async function carregar() {
+      if (!slug) {
+        mostrarErro('Link inválido', 'O URL não tem uma loja.');
+        return;
+      }
+
+      try {
+        const resp = await fetch('/api/publico/loja/' + encodeURIComponent(slug));
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mostrarErro('Loja não encontrada', 'Esta loja não existe.');
+          return;
+        }
+
+        renderizar(data.loja, data.jogos);
+
+      } catch (e) {
+        mostrarErro('Erro de ligação', 'Não foi possível contactar o servidor.');
+      }
+    }
+
+    function renderizar(loja, jogos) {
+      document.title = loja.nome + ' — ZonaXP Publishers';
+
+      headerLoja.innerHTML = `
+        <div class="brand">ZonaXP Publishers</div>
+        <div class="nome-loja">${escapar(loja.nome)}</div>
+        ${loja.bio ? `<div class="bio-loja">${escapar(loja.bio)}</div>` : ''}
+        <div class="contador">${jogos.length} ${jogos.length === 1 ? 'jogo' : 'jogos'}</div>
+      `;
+
+      if (jogos.length === 0) {
+        app.innerHTML = `
+          <div class="vazio">
+            <div class="vazio-emoji">📦</div>
+            <div class="vazio-titulo">Ainda sem jogos</div>
+            <div class="vazio-txt">Esta loja ainda não publicou nenhum jogo.</div>
+          </div>
+        `;
+        return;
+      }
+
+      app.innerHTML = `
+        <div class="grelha">
+          ${jogos.map(j => `
+            <a class="card-jogo" href="/jogo/${escapar(j.slug)}">
+              <div class="card-img" ${j.imagem ? `style="background-image:url('${escapar(j.imagem)}')"` : ''}>
+                ${j.imagem ? '' : '🎮'}
+              </div>
+              <div class="card-info">
+                <div class="card-tag">${escapar(j.plataforma)}</div>
+                <div class="card-nome">${escapar(j.nome)}</div>
+                <div class="card-meta">${escapar(j.categoria)}</div>
+              </div>
+            </a>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    carregar();
+  </script>
+</body>
+</html>

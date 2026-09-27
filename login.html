@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — ZonaXP Publishers</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f7;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #1a1a1a;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 380px;
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .logo h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.5px;
+    }
+    .logo p {
+      font-size: 13px;
+      color: #888;
+      margin-top: 4px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 6px;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #e5e5e5;
+      border-radius: 10px;
+      font-size: 15px;
+      background: #fafafa;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    input:focus {
+      outline: none;
+      border-color: #1a1a1a;
+      background: #fff;
+    }
+    .campo {
+      margin-bottom: 18px;
+    }
+    button {
+      width: 100%;
+      padding: 13px;
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      margin-top: 8px;
+    }
+    button:hover {
+      background: #000;
+      transform: translateY(-1px);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .aviso {
+      background: #fff8e6;
+      border: 1px solid #ffe58f;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 12.5px;
+      color: #7a5b00;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .aviso strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+    .aviso code {
+      background: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      border: 1px solid #ffe58f;
+    }
+    .erro {
+      background: #fff0f0;
+      border: 1px solid #ffcccc;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #c00;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .erro.ativo {
+      display: block;
+    }
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <h1>ZonaXP Publishers</h1>
+      <p>Painel de gestão de jogos</p>
+    </div>
+
+    <div class="aviso">
+      <strong>🔑 Credenciais de teste (Fase 1):</strong>
+      Nome: <code>ZonaXP Membro</code><br>
+      Senha: <code>Editor.Jogos</code>
+    </div>
+
+    <div class="erro" id="erro"></div>
+
+    <form id="formLogin">
+      <div class="campo">
+        <label for="nome">Nome</label>
+        <input type="text" id="nome" placeholder="ZonaXP Membro" autocomplete="username" required>
+      </div>
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+      <button type="submit" id="btnEntrar">Entrar</button>
+    </form>
+
+    <div class="footer">
+      Sistema independente — Fase 1
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('formLogin');
+    const nomeInput = document.getElementById('nome');
+    const senhaInput = document.getElementById('senha');
+    const btnEntrar = document.getElementById('btnEntrar');
+    const erroBox = document.getElementById('erro');
+
+    // Se já tem token válido no localStorage → vai direto para o painel
+    const tokenGuardado = localStorage.getItem('publisher_token');
+    if (tokenGuardado) {
+      window.location.href = '/painel';
+    }
+
+    function mostrarErro(msg) {
+      erroBox.textContent = msg;
+      erroBox.classList.add('ativo');
+    }
+
+    function esconderErro() {
+      erroBox.classList.remove('ativo');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      esconderErro();
+
+      const nome = nomeInput.value.trim();
+      const senha = senhaInput.value;
+
+      if (!nome || !senha) {
+        mostrarErro('Preenche os dois campos.');
+        return;
+      }
+
+      btnEntrar.disabled = true;
+      btnEntrar.textContent = 'A entrar...';
+
+      try {
+        const resp = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome, senha }),
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mostrarErro(data.erro || 'Credenciais inválidas.');
+          btnEntrar.disabled = false;
+          btnEntrar.textContent = 'Entrar';
+          return;
+        }
+
+        // Guardar token e dados do publisher
+        localStorage.setItem('publisher_token', data.token);
+        localStorage.setItem('publisher_nome', data.publisher.nome);
+        localStorage.setItem('publisher_slug', data.publisher.slug);
+
+        // Entrar no painel
+        window.location.href = '/painel';
+
+      } catch (err) {
+        mostrarErro('Erro de ligação ao servidor. Está a correr?');
+        btnEntrar.disabled = false;
+        btnEntrar.textContent = 'Entrar';
+      }
+    });
+  </script>
+</body>
+</html>

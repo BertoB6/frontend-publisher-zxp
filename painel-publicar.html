@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Publicar Jogo — ZonaXP Publishers</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f7;
+      min-height: 100vh;
+      color: #1a1a1a;
+      padding-bottom: 60px;
+    }
+
+    /* HEADER */
+    header {
+      background: #fff;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .btn-voltar {
+      background: #fff;
+      border: 1.5px solid #e5e5e5;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .btn-voltar:hover {
+      border-color: #1a1a1a;
+    }
+    header h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* CARD */
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid #eee;
+      padding: 24px 20px;
+    }
+
+    /* CAMPOS */
+    .campo {
+      margin-bottom: 18px;
+    }
+    .campo:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 6px;
+    }
+    label .obrig {
+      color: #d00;
+      margin-left: 2px;
+    }
+    label .opc {
+      color: #aaa;
+      font-weight: 400;
+      font-size: 11.5px;
+      margin-left: 4px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #e5e5e5;
+      border-radius: 10px;
+      font-size: 14.5px;
+      background: #fafafa;
+      transition: all 0.2s;
+      font-family: inherit;
+      color: #1a1a1a;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #1a1a1a;
+      background: #fff;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.5;
+    }
+    textarea.longa {
+      min-height: 160px;
+    }
+
+    /* GRID 2 COLUNAS */
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* PREVIEW IMAGEM */
+    .preview {
+      margin-top: 10px;
+      width: 100%;
+      aspect-ratio: 1/1;
+      max-width: 120px;
+      border-radius: 10px;
+      border: 1.5px dashed #ddd;
+      background: #fafafa center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #bbb;
+      font-size: 11px;
+      text-align: center;
+      padding: 10px;
+    }
+    .preview.tem-img {
+      border-style: solid;
+      border-color: #e5e5e5;
+    }
+
+    /* BOTÕES */
+    .acoes {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .acoes button {
+      flex: 1;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      border: none;
+      transition: all 0.15s;
+    }
+    .btn-cancelar {
+      background: #f0f0f0;
+      color: #333;
+    }
+    .btn-cancelar:hover {
+      background: #e5e5e5;
+    }
+    .btn-guardar {
+      background: #1a1a1a;
+      color: #fff;
+    }
+    .btn-guardar:hover {
+      background: #000;
+      transform: translateY(-1px);
+    }
+    .btn-guardar:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ERRO */
+    .erro {
+      background: #fff0f0;
+      border: 1px solid #ffcccc;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #c00;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .erro.ativo { display: block; }
+    .erro ul {
+      margin-left: 16px;
+      margin-top: 6px;
+    }
+    .erro li { margin-bottom: 2px; }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1a1a1a;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: transform 0.3s;
+      z-index: 200;
+      max-width: 90%;
+    }
+    .toast.ativo { transform: translateX(-50%) translateY(0); }
+    .toast.erro { background: #d00; }
+
+    /* DICA */
+    .dica {
+      background: #f0f7ff;
+      border: 1px solid #cce0ff;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #004080;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <button class="btn-voltar" onclick="window.location.href='/painel'">←</button>
+    <h1 id="titulo">Publicar novo jogo</h1>
+  </header>
+
+  <div class="container">
+    <div class="card">
+
+      <div class="erro" id="erro"></div>
+
+      <form id="formJogo">
+
+        <!-- NOME -->
+        <div class="campo">
+          <label>Nome do jogo <span class="obrig">*</span></label>
+          <input type="text" id="nome" placeholder="Ex: Mortal Kombat Mod" required>
+        </div>
+
+        <!-- CATEGORIA + PLATAFORMA -->
+        <div class="grid2">
+          <div class="campo">
+            <label>Categoria <span class="obrig">*</span></label>
+            <input type="text" id="categoria" placeholder="Ex: Luta" required>
+          </div>
+          <div class="campo">
+            <label>Plataforma <span class="obrig">*</span></label>
+            <select id="plataforma" required>
+              <option value="">Escolher...</option>
+              <option value="PSP">PSP</option>
+              <option value="PS2">PS2</option>
+              <option value="PC">PC</option>
+              <option value="APK">APK</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- IMAGEM -->
+        <div class="campo">
+          <label>URL da imagem <span class="obrig">*</span></label>
+          <input type="url" id="imagem" placeholder="https://..." required oninput="atualizarPreview()">
+          <div class="preview" id="preview">Sem imagem</div>
+        </div>
+
+        <!-- TAMANHO + SENHA -->
+        <div class="grid2">
+          <div class="campo">
+            <label>Tamanho <span class="obrig">*</span></label>
+            <input type="text" id="tamanho" placeholder="Ex: 1.2 GB" required>
+          </div>
+          <div class="campo">
+            <label>Senha <span class="obrig">*</span></label>
+            <input type="text" id="senha" placeholder="Ex: 1234" required>
+          </div>
+        </div>
+
+        <!-- DOWNLOAD -->
+        <div class="campo">
+          <label>Link de download <span class="obrig">*</span></label>
+          <input type="url" id="download" placeholder="https://mega.nz/..." required>
+        </div>
+
+        <!-- DESCRIÇÃO CURTA -->
+        <div class="campo">
+          <label>Descrição curta <span class="obrig">*</span></label>
+          <textarea id="descricao_curta" placeholder="Uma linha rápida sobre o jogo." maxlength="200" required></textarea>
+          <div class="dica">Máximo 200 caracteres. Aparece na listagem de jogos.</div>
+        </div>
+
+        <!-- DESCRIÇÃO LONGA -->
+        <div class="campo">
+          <label>Descrição longa <span class="obrig">*</span></label>
+          <textarea id="descricao_longa" class="longa" placeholder="Descrição completa.&#10;&#10;- Podes usar várias linhas&#10;- Listas com hífens&#10;- Quebras de linha são preservadas" required></textarea>
+          <div class="dica">Aceita várias linhas. As quebras de linha são preservadas.</div>
+        </div>
+
+        <!-- BOTÕES -->
+        <div class="acoes">
+          <button type="button" class="btn-cancelar" onclick="window.location.href='/painel'">Cancelar</button>
+          <button type="submit" class="btn-guardar" id="btnGuardar">Publicar</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const TOKEN = localStorage.getItem('publisher_token');
+    if (!TOKEN) window.location.href = '/login';
+
+    // Ver se é edição (tem ?id=X no URL)
+    const params = new URLSearchParams(window.location.search);
+    const jogoId = params.get('id');
+    const modoEdicao = !!jogoId;
+
+    if (modoEdicao) {
+      document.getElementById('titulo').textContent = 'Editar jogo';
+      document.getElementById('btnGuardar').textContent = 'Guardar alterações';
+    }
+
+    /* ---------- Toast ---------- */
+    function toast(msg, erro = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast ativo' + (erro ? ' erro' : '');
+      setTimeout(() => t.classList.remove('ativo'), 2500);
+    }
+
+    /* ---------- Erro ---------- */
+    function mostrarErro(msg, lista) {
+      const box = document.getElementById('erro');
+      let html = msg;
+      if (lista && lista.length) {
+        html += '<ul>' + lista.map(f => `<li>${f}</li>`).join('') + '</ul>';
+      }
+      box.innerHTML = html;
+      box.classList.add('ativo');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function esconderErro() {
+      document.getElementById('erro').classList.remove('ativo');
+    }
+
+    /* ---------- Preview imagem ---------- */
+    function atualizarPreview() {
+      const url = document.getElementById('imagem').value.trim();
+      const box = document.getElementById('preview');
+      if (!url) {
+        box.textContent = 'Sem imagem';
+        box.classList.remove('tem-img');
+        box.style.backgroundImage = '';
+        return;
+      }
+      const img = new Image();
+      img.onload = () => {
+        box.textContent = '';
+        box.classList.add('tem-img');
+        box.style.backgroundImage = `url('${url}')`;
+      };
+      img.onerror = () => {
+        box.textContent = 'Imagem inválida';
+        box.classList.remove('tem-img');
+        box.style.backgroundImage = '';
+      };
+      img.src = url;
+    }
+
+    /* ---------- Carregar jogo (modo edição) ---------- */
+    async function carregarJogo() {
+      try {
+        const resp = await fetch('/api/jogos/' + jogoId, {
+          headers: { 'Authorization': 'Bearer ' + TOKEN }
+        });
+
+        if (resp.status === 401) {
+          localStorage.clear();
+          window.location.href = '/login';
+          return;
+        }
+
+        const data = await resp.json();
+        if (!resp.ok) {
+          toast(data.erro || 'Jogo não encontrado.', true);
+          setTimeout(() => window.location.href = '/painel', 1500);
+          return;
+        }
+
+        const j = data.jogo;
+        document.getElementById('nome').value = j.nome || '';
+        document.getElementById('categoria').value = j.categoria || '';
+        document.getElementById('plataforma').value = j.plataforma || '';
+        document.getElementById('imagem').value = j.imagem || '';
+        document.getElementById('tamanho').value = j.tamanho || '';
+        document.getElementById('senha').value = j.senha || '';
+        document.getElementById('download').value = j.download || '';
+        document.getElementById('descricao_curta').value = j.descricao_curta || '';
+        document.getElementById('descricao_longa').value = j.descricao_longa || '';
+
+        atualizarPreview();
+
+      } catch (e) {
+        toast('Erro a carregar o jogo.', true);
+      }
+    }
+
+    /* ---------- Submeter ---------- */
+    document.getElementById('formJogo').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      esconderErro();
+
+      const btn = document.getElementById('btnGuardar');
+      btn.disabled = true;
+      btn.textContent = modoEdicao ? 'A guardar...' : 'A publicar...';
+
+      const dados = {
+        nome: document.getElementById('nome').value.trim(),
+        categoria: document.getElementById('categoria').value.trim(),
+        plataforma: document.getElementById('plataforma').value,
+        imagem: document.getElementById('imagem').value.trim(),
+        tamanho: document.getElementById('tamanho').value.trim(),
+        senha: document.getElementById('senha').value.trim(),
+        download: document.getElementById('download').value.trim(),
+        descricao_curta: document.getElementById('descricao_curta').value.trim(),
+        descricao_longa: document.getElementById('descricao_longa').value,
+      };
+
+      try {
+        const url = modoEdicao ? '/api/jogos/' + jogoId : '/api/jogos';
+        const metodo = modoEdicao ? 'PUT' : 'POST';
+
+        const resp = await fetch(url, {
+          method: metodo,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + TOKEN,
+          },
+          body: JSON.stringify(dados),
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok) {
+          if (data.faltam) {
+            mostrarErro('Preenche todos os campos obrigatórios:', data.faltam);
+          } else {
+            mostrarErro(data.erro || 'Erro ao guardar.');
+          }
+          btn.disabled = false;
+          btn.textContent = modoEdicao ? 'Guardar alterações' : 'Publicar';
+          return;
+        }
+
+        toast(modoEdicao ? 'Alterações guardadas!' : 'Jogo publicado!');
+        setTimeout(() => window.location.href = '/painel', 800);
+
+      } catch (err) {
+        mostrarErro('Erro de ligação ao servidor.');
+        btn.disabled = false;
+        btn.textContent = modoEdicao ? 'Guardar alterações' : 'Publicar';
+      }
+    });
+
+    /* ---------- Iniciar ---------- */
+    if (modoEdicao) carregarJogo();
+  </script>
+</body>
+</html>

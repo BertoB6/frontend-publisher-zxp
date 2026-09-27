@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel — ZonaXP Publishers</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f7;
+      min-height: 100vh;
+      color: #1a1a1a;
+      padding-bottom: 40px;
+    }
+
+    /* HEADER */
+    header {
+      background: #fff;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header-info h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .header-info p {
+      font-size: 12px;
+      color: #888;
+      margin-top: 2px;
+    }
+    .btn-sair {
+      background: #fff;
+      border: 1.5px solid #e5e5e5;
+      color: #666;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .btn-sair:hover {
+      border-color: #ffcccc;
+      color: #c00;
+      background: #fff5f5;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* STATS */
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat {
+      background: #fff;
+      border-radius: 12px;
+      padding: 18px;
+      border: 1px solid #eee;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #888;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .stat-valor {
+      font-size: 28px;
+      font-weight: 700;
+      margin-top: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    /* BOTÃO NOVO */
+    .btn-novo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 15px;
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      margin-bottom: 20px;
+    }
+    .btn-novo:hover {
+      background: #000;
+      transform: translateY(-1px);
+    }
+
+    /* LISTA */
+    .lista-titulo {
+      font-size: 13px;
+      font-weight: 700;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+    .jogo-card {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #eee;
+      padding: 14px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 10px;
+      transition: all 0.15s;
+    }
+    .jogo-card:hover {
+      border-color: #ddd;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .jogo-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: #f0f0f0;
+      flex-shrink: 0;
+    }
+    .jogo-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .jogo-nome {
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .jogo-meta {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+    }
+    .jogo-acoes {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .btn-acao {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1.5px solid #eee;
+      background: #fff;
+      cursor: pointer;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .btn-acao:hover {
+      border-color: #1a1a1a;
+      background: #f8f8f8;
+    }
+    .btn-acao.apagar:hover {
+      border-color: #ffcccc;
+      background: #fff5f5;
+    }
+
+    /* VAZIO */
+    .vazio {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+    .vazio-emoji {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+    .vazio-txt {
+      font-size: 14px;
+    }
+
+    /* LOADING */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+      font-size: 14px;
+    }
+
+    /* MODAL CONFIRMAÇÃO */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+    .modal-overlay.ativo {
+      display: flex;
+    }
+    .modal {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 340px;
+      width: 100%;
+    }
+    .modal h3 {
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+    .modal p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .modal-botoes {
+      display: flex;
+      gap: 10px;
+    }
+    .modal-botoes button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      border: none;
+      transition: all 0.15s;
+    }
+    .btn-cancelar {
+      background: #f0f0f0;
+      color: #333;
+    }
+    .btn-cancelar:hover {
+      background: #e5e5e5;
+    }
+    .btn-confirmar {
+      background: #d00;
+      color: #fff;
+    }
+    .btn-confirmar:hover {
+      background: #b00;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1a1a1a;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: transform 0.3s;
+      z-index: 200;
+      max-width: 90%;
+    }
+    .toast.ativo {
+      transform: translateX(-50%) translateY(0);
+    }
+    .toast.erro {
+      background: #d00;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-info">
+      <h1 id="nomePublisher">A carregar...</h1>
+      <p>ZonaXP Publishers</p>
+    </div>
+    <button class="btn-sair" onclick="sair()">Sair</button>
+  </header>
+
+  <div class="container">
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Jogos</div>
+        <div class="stat-valor" id="statJogos">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Loja</div>
+        <div class="stat-valor" id="statLoja" style="font-size:14px;padding-top:10px;">—</div>
+      </div>
+    </div>
+
+    <button class="btn-novo" onclick="window.location.href='/painel/publicar'">
+      ➕ Publicar novo jogo
+    </button>
+
+    <div class="lista-titulo">Os meus jogos</div>
+
+    <div id="lista">
+      <div class="loading">A carregar jogos...</div>
+    </div>
+
+  </div>
+
+  <!-- Modal de confirmação -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h3>Apagar jogo?</h3>
+      <p id="modalTexto">Tens a certeza? Esta ação não pode ser desfeita.</p>
+      <div class="modal-botoes">
+        <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+        <button class="btn-confirmar" onclick="confirmarApagar()">Apagar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const TOKEN = localStorage.getItem('publisher_token');
+
+    // Se não tem token → volta para login
+    if (!TOKEN) {
+      window.location.href = '/login';
+    }
+
+    // Mostrar nome do publisher
+    const nomeGuardado = localStorage.getItem('publisher_nome') || 'Publisher';
+    document.getElementById('nomePublisher').textContent = nomeGuardado;
+
+    // Slug da loja
+    const slugLoja = localStorage.getItem('publisher_slug') || '';
+    if (slugLoja) {
+      document.getElementById('statLoja').innerHTML =
+        `<a href="/loja/${slugLoja}" target="_blank" style="color:#1a1a1a;text-decoration:none;font-weight:700;">/loja/${slugLoja} ↗</a>`;
+    }
+
+    let jogoParaApagar = null;
+
+    /* ---------- Toast ---------- */
+    function toast(msg, erro = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast ativo' + (erro ? ' erro' : '');
+      setTimeout(() => t.classList.remove('ativo'), 2500);
+    }
+
+    /* ---------- Sair ---------- */
+    function sair() {
+      localStorage.removeItem('publisher_token');
+      localStorage.removeItem('publisher_nome');
+      localStorage.removeItem('publisher_slug');
+      window.location.href = '/login';
+    }
+
+    /* ---------- Carregar jogos ---------- */
+    async function carregarJogos() {
+      const lista = document.getElementById('lista');
+      try {
+        const resp = await fetch('/api/jogos', {
+          headers: { 'Authorization': 'Bearer ' + TOKEN }
+        });
+
+        if (resp.status === 401) {
+          sair();
+          return;
+        }
+
+        const data = await resp.json();
+        const jogos = data.jogos || [];
+
+        document.getElementById('statJogos').textContent = jogos.length;
+
+        if (jogos.length === 0) {
+          lista.innerHTML = `
+            <div class="vazio">
+              <div class="vazio-emoji">📦</div>
+              <div class="vazio-txt">Ainda não publicaste nenhum jogo.<br>Clica em "Publicar novo jogo" para começar.</div>
+            </div>
+          `;
+          return;
+        }
+
+        lista.innerHTML = jogos.map(j => `
+          <div class="jogo-card">
+            <img class="jogo-img" src="${escapar(j.imagem)}" alt="" onerror="this.style.background='#eee';this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 60 60%22><rect width=%2260%22 height=%2260%22 fill=%22%23f0f0f0%22/><text x=%2230%22 y=%2236%22 font-size=%2224%22 text-anchor=%22middle%22>🎮</text></svg>'">
+            <div class="jogo-info">
+              <div class="jogo-nome">${escapar(j.nome)}</div>
+              <div class="jogo-meta">${escapar(j.plataforma)} • ${escapar(j.categoria)}</div>
+            </div>
+            <div class="jogo-acoes">
+              <button class="btn-acao" title="Ver público" onclick="window.open('/jogo/${j.slug}','_blank')">👁️</button>
+              <button class="btn-acao" title="Editar" onclick="window.location.href='/painel/publicar?id=${j.id}'">✏️</button>
+              <button class="btn-acao apagar" title="Apagar" onclick="pedirApagar(${j.id}, '${escapar(j.nome).replace(/'/g,"\\'")}')">🗑️</button>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (e) {
+        lista.innerHTML = '<div class="vazio"><div class="vazio-emoji">⚠️</div><div class="vazio-txt">Erro a carregar. O servidor está ligado?</div></div>';
+      }
+    }
+
+    /* ---------- Apagar ---------- */
+    function pedirApagar(id, nome) {
+      jogoParaApagar = id;
+      document.getElementById('modalTexto').textContent =
+        `Tens a certeza que queres apagar "${nome}"? Esta ação não pode ser desfeita.`;
+      document.getElementById('modal').classList.add('ativo');
+    }
+
+    function fecharModal() {
+      jogoParaApagar = null;
+      document.getElementById('modal').classList.remove('ativo');
+    }
+
+    async function confirmarApagar() {
+      if (!jogoParaApagar) return;
+      const id = jogoParaApagar;
+      fecharModal();
+
+      try {
+        const resp = await fetch('/api/jogos/' + id, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + TOKEN }
+        });
+        const data = await resp.json();
+
+        if (!resp.ok) {
+          toast(data.erro || 'Erro ao apagar.', true);
+          return;
+        }
+        toast('Jogo apagado.');
+        carregarJogos();
+      } catch (e) {
+        toast('Erro de ligação.', true);
+      }
+    }
+
+    /* ---------- Escapar HTML ---------- */
+    function escapar(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    /* ---------- Iniciar ---------- */
+    carregarJogos();
+  </script>
+</body>
+</html>

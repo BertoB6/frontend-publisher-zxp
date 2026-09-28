@@ -11,7 +11,7 @@
       --primaria: #ff00aa;
       --secundaria: #00aaff;
       --fundo: #0a0a1a;
-      --cards: #1a1a2e;
+      --cards: #15152a;
       --texto: #ffffff;
     }
 
@@ -26,8 +26,10 @@
 
     /* HEADER */
     header {
-      background: var(--cards);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(10,10,26,0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
       padding: 16px 20px;
       display: flex;
       align-items: center;
@@ -38,18 +40,20 @@
       transition: background 0.3s;
     }
     .btn-voltar {
-      background: transparent;
-      border: 1.5px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
       color: var(--texto);
       padding: 8px 12px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 15px;
       cursor: pointer;
       font-family: inherit;
       transition: all 0.15s;
+      flex-shrink: 0;
     }
     .btn-voltar:hover {
       border-color: var(--primaria);
+      background: rgba(255,0,170,0.1);
     }
     header h1 {
       font-size: 16px;
@@ -124,7 +128,7 @@
     }
     .preview-bio {
       font-size: 13px;
-      opacity: 0.7;
+      color: rgba(255,255,255,0.65);
       line-height: 1.4;
       word-break: break-word;
     }
@@ -151,11 +155,11 @@
       transition: background 0.3s;
     }
     .card-titulo {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
       letter-spacing: 0.5px;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,0.55);
       margin-bottom: 16px;
       display: flex;
       align-items: center;
@@ -191,6 +195,10 @@
       outline: none;
       border-color: var(--primaria);
       background: rgba(0,0,0,0.4);
+      box-shadow: 0 0 0 3px rgba(255,0,170,0.15);
+    }
+    input::placeholder, textarea::placeholder {
+      color: rgba(255,255,255,0.3);
     }
     textarea {
       resize: vertical;
@@ -230,7 +238,7 @@
       border-radius: 6px;
     }
     .cor-hex {
-      width: 90px !important;
+      width: 100px !important;
       padding: 9px 10px !important;
       font-family: ui-monospace, monospace !important;
       font-size: 13px !important;
@@ -255,6 +263,7 @@
     .btn-repor:hover {
       border-color: var(--secundaria);
       color: var(--secundaria);
+      background: rgba(0,170,255,0.05);
     }
 
     .acoes {
@@ -281,9 +290,9 @@
       background: rgba(255,255,255,0.15);
     }
     .btn-guardar {
-      background: var(--primaria);
+      background: linear-gradient(135deg, var(--primaria), var(--secundaria));
       color: #fff;
-      box-shadow: 0 0 20px rgba(255,0,170,0.3);
+      box-shadow: 0 4px 16px rgba(255,0,170,0.3);
     }
     .btn-guardar:hover {
       filter: brightness(1.15);
@@ -293,6 +302,7 @@
       opacity: 0.5;
       cursor: not-allowed;
       transform: none;
+      filter: none;
     }
 
     /* LINK LOJA */
@@ -307,9 +317,11 @@
       padding: 12px;
       border-radius: 10px;
       transition: all 0.15s;
+      border: 1.5px solid rgba(0,170,255,0.2);
     }
     .ver-loja:hover {
       background: rgba(0,170,255,0.1);
+      border-color: var(--secundaria);
     }
 
     /* ERRO */
@@ -322,6 +334,7 @@
       color: #ff8888;
       margin-bottom: 16px;
       display: none;
+      line-height: 1.5;
     }
     .erro.ativo { display: block; }
 
@@ -329,12 +342,12 @@
     .loading {
       text-align: center;
       padding: 60px 20px;
-      color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,0.4);
     }
     .spinner {
       width: 32px;
       height: 32px;
-      border: 3px solid rgba(255,255,255,0.1);
+      border: 3px solid rgba(255,255,255,0.08);
       border-top-color: var(--primaria);
       border-radius: 50%;
       animation: girar 0.8s linear infinite;
@@ -369,7 +382,7 @@
 <body>
 
   <header>
-    <button class="btn-voltar" onclick="window.location.href='/painel'">←</button>
+    <button class="btn-voltar" onclick="window.location.href='/painel.html'">←</button>
     <h1>⚙️ Configurar loja</h1>
   </header>
 
@@ -384,10 +397,8 @@
 
   <script>
     // ============================================
-    // CONFIGURAÇÃO — URL da API
+    // CONFIGURAÇÃO
     // ============================================
-    // LOCAL:      'http://localhost:3001'
-    // PRODUÇÃO:   'https://publisher-zonaxp.onrender.com'
     const API_URL = 'https://publisher-zonaxp.onrender.com';
 
     const CORES_ZONAXP = {
@@ -399,7 +410,7 @@
     };
 
     const TOKEN = localStorage.getItem('publisher_token');
-    if (!TOKEN) window.location.href = '/login';
+    if (!TOKEN) window.location.href = '/login.html';
 
     const app = document.getElementById('app');
     let lojaOriginal = null;
@@ -495,7 +506,7 @@
           <div class="erro" id="erro"></div>
 
           <div class="acoes">
-            <button type="button" class="btn-cancelar" onclick="window.location.href='/painel'">Cancelar</button>
+            <button type="button" class="btn-cancelar" onclick="window.location.href='/painel.html'">Cancelar</button>
             <button type="submit" class="btn-guardar" id="btnGuardar">Guardar</button>
           </div>
 
@@ -558,6 +569,8 @@
 
       const prevAvatar = document.getElementById('prevAvatar');
       const prevCapa = document.getElementById('prevCapa');
+      const prevNome = document.getElementById('prevNome');
+      const prevBio = document.getElementById('prevBio');
 
       prevNome.textContent = nome;
       prevBio.textContent = bio;
@@ -576,7 +589,6 @@
         prevCapa.style.backgroundImage = '';
       }
 
-      // Atualizar link da loja quando o nome muda
       const slugPreview = gerarSlug(nome);
       atualizarLinkLoja(slugPreview);
     }
@@ -595,7 +607,7 @@
     function atualizarLinkLoja(slug) {
       if (!slug) return;
       const link = document.getElementById('linkLoja');
-      if (link) link.href = '/loja/' + slug;
+      if (link) link.href = '/loja.html?slug=' + slug;
     }
 
     function reporZonaXP() {
@@ -616,7 +628,7 @@
 
         if (resp.status === 401) {
           localStorage.clear();
-          window.location.href = '/login';
+          window.location.href = '/login.html';
           return;
         }
 
@@ -677,8 +689,12 @@
           return;
         }
 
+        // Atualizar localStorage (slug/nome podem ter mudado)
+        localStorage.setItem('publisher_nome', data.loja.nome);
+        localStorage.setItem('publisher_slug', data.loja.slug);
+        localStorage.setItem('publisher_whatsapp', data.loja.whatsapp);
+
         toast('Loja atualizada!');
-        // Recarregar para atualizar slug/link
         setTimeout(() => carregar(), 700);
 
       } catch (err) {

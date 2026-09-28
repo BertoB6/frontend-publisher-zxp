@@ -59,6 +59,7 @@
       font-weight: 700;
       color: var(--texto);
       letter-spacing: -0.2px;
+      text-decoration: none;
     }
     .topo-brand span {
       color: rgba(255,255,255,0.5);
@@ -359,7 +360,7 @@
 
   <div class="topo">
     <button class="btn-voltar" onclick="voltar()">←</button>
-    <div class="topo-brand">Publisher <span>ZonaXP</span></div>
+    <a class="topo-brand" href="/index.html">Publisher <span>ZonaXP</span></a>
   </div>
 
   <div class="container" id="app">
@@ -370,7 +371,7 @@
   </div>
 
   <div class="rodape">
-    Publicado via <a href="/">Publisher ZonaXP</a>
+    Publicado via <a href="/index.html">Publisher ZonaXP</a>
   </div>
 
   <script>
@@ -379,8 +380,9 @@
     // ============================================
     const API_URL = 'https://publisher-zonaxp.onrender.com';
 
-    const partes = window.location.pathname.split('/').filter(Boolean);
-    const slug = partes[partes.length - 1];
+    // Ler slug da URL (?slug=xxx)
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('slug');
 
     const app = document.getElementById('app');
 
@@ -403,7 +405,7 @@
       if (document.referrer && document.referrer.includes(window.location.host)) {
         window.history.back();
       } else {
-        window.location.href = '/';
+        window.location.href = '/index.html';
       }
     }
 
@@ -414,7 +416,7 @@
           <div class="emoji">🔍</div>
           <h2>${titulo}</h2>
           <p>${msg}</p>
-          <p style="margin-top:14px"><a href="/">← Voltar à home</a></p>
+          <p style="margin-top:14px"><a href="/index.html">← Voltar à home</a></p>
         </div>
       `;
     }
@@ -443,7 +445,6 @@
     function renderizar(loja, jogos) {
       document.title = loja.nome + ' — Publisher ZonaXP';
 
-      // Aplicar cores da loja
       if (loja.cores) aplicarCores(loja.cores);
 
       const capaStyle = loja.capa
@@ -519,7 +520,7 @@
     }
 
     function irParaJogo(slug) {
-      window.location.href = '/jogo/' + slug;
+      window.location.href = '/jogo.html?slug=' + slug;
     }
 
     carregar();

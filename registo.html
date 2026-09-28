@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Entrar — Publisher ZonaXP</title>
+  <title>Criar conta — Publisher ZonaXP</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -59,14 +59,14 @@
 
     .logo {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
     .logo-emoji {
       font-size: 42px;
       margin-bottom: 8px;
     }
     .logo h1 {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
       letter-spacing: -0.6px;
       background: linear-gradient(90deg, var(--primaria), var(--secundaria));
@@ -80,6 +80,23 @@
       margin-top: 6px;
     }
 
+    .info {
+      background: rgba(0,170,255,0.08);
+      border: 1px solid rgba(0,170,255,0.2);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+    .info strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13px;
+      color: var(--secundaria);
+    }
+
     label {
       display: block;
       font-size: 12.5px;
@@ -87,6 +104,7 @@
       color: rgba(255,255,255,0.7);
       margin-bottom: 6px;
     }
+    label .obrig { color: var(--primaria); margin-left: 2px; }
 
     .campo {
       margin-bottom: 16px;
@@ -137,6 +155,13 @@
     }
     .btn-olho:hover {
       color: var(--secundaria);
+    }
+
+    .dica {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 5px;
+      padding-left: 2px;
     }
 
     button.btn-principal {
@@ -198,8 +223,8 @@
 
     .footer {
       text-align: center;
-      font-size: 13px;
-      color: rgba(255,255,255,0.5);
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.4);
       margin-top: 22px;
     }
     .footer a {
@@ -211,58 +236,60 @@
     .footer a:hover {
       color: var(--primaria);
     }
-
-    .rodape-voltar {
-      text-align: center;
-      font-size: 11.5px;
-      color: rgba(255,255,255,0.3);
-      margin-top: 18px;
-    }
-    .rodape-voltar a {
-      color: rgba(255,255,255,0.5);
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.15s;
-    }
-    .rodape-voltar a:hover {
-      color: var(--secundaria);
-    }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="logo">
       <div class="logo-emoji">🎮</div>
-      <h1>Publisher ZonaXP</h1>
-      <p>Painel dos publishers</p>
+      <h1>Criar conta</h1>
+      <p>Junta-te ao mercado Publisher ZonaXP</p>
+    </div>
+
+    <div class="info">
+      <strong>💡 Como funciona:</strong>
+      Assim que criares conta, tens a tua loja própria automaticamente.
+      Só precisas de um nome, WhatsApp e uma senha.
     </div>
 
     <div class="erro" id="erro"></div>
     <div class="sucesso" id="sucesso"></div>
 
-    <form id="formLogin">
+    <form id="formRegisto">
+
       <div class="campo">
-        <label for="whatsapp">WhatsApp</label>
-        <input type="tel" id="whatsapp" placeholder="Ex: 841234567" autocomplete="tel" inputmode="numeric" required>
+        <label for="nome">Nome da loja <span class="obrig">*</span></label>
+        <input type="text" id="nome" placeholder="Ex: João Games" autocomplete="organization" required>
+        <div class="dica">Este é o nome que os visitantes vão ver.</div>
       </div>
 
       <div class="campo">
-        <label for="senha">Senha</label>
+        <label for="whatsapp">WhatsApp <span class="obrig">*</span></label>
+        <input type="tel" id="whatsapp" placeholder="Ex: 841234567" autocomplete="tel" inputmode="numeric" required>
+        <div class="dica">Usado para entrar na conta.</div>
+      </div>
+
+      <div class="campo">
+        <label for="senha">Senha <span class="obrig">*</span></label>
         <div class="input-wrap">
-          <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password" class="input-senha" required>
+          <input type="password" id="senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password" class="input-senha" required>
           <button type="button" class="btn-olho" onclick="toggleSenha('senha', this)">👁️</button>
         </div>
       </div>
 
-      <button type="submit" class="btn-principal" id="btnEntrar">Entrar</button>
+      <div class="campo">
+        <label for="senha2">Confirmar senha <span class="obrig">*</span></label>
+        <div class="input-wrap">
+          <input type="password" id="senha2" placeholder="Repete a senha" autocomplete="new-password" class="input-senha" required>
+          <button type="button" class="btn-olho" onclick="toggleSenha('senha2', this)">👁️</button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-principal" id="btnRegistar">Criar conta</button>
     </form>
 
     <div class="footer">
-      Ainda não tens conta? <a href="/registo.html">Regista-te</a>
-    </div>
-
-    <div class="rodape-voltar">
-      <a href="/index.html">← Voltar ao mercado</a>
+      Já tens conta? <a href="/login.html">Entrar</a>
     </div>
   </div>
 
@@ -272,29 +299,18 @@
     // ============================================
     const API_URL = 'https://publisher-zonaxp.onrender.com';
 
-    const form = document.getElementById('formLogin');
+    const form = document.getElementById('formRegisto');
+    const nomeInput = document.getElementById('nome');
     const whatsappInput = document.getElementById('whatsapp');
     const senhaInput = document.getElementById('senha');
-    const btnEntrar = document.getElementById('btnEntrar');
+    const senha2Input = document.getElementById('senha2');
+    const btnRegistar = document.getElementById('btnRegistar');
     const erroBox = document.getElementById('erro');
     const sucessoBox = document.getElementById('sucesso');
 
-    // Se já tem token → vai direto para o painel
+    // Se já tem token → vai para o painel
     if (localStorage.getItem('publisher_token')) {
       window.location.href = '/painel.html';
-    }
-
-    /* ---------- Ler query strings (?wpp=...&novo=1) ---------- */
-    const params = new URLSearchParams(window.location.search);
-    const wppParam = params.get('wpp');
-    const novoParam = params.get('novo');
-
-    if (wppParam) {
-      whatsappInput.value = wppParam.replace(/\D/g, '');
-    }
-    if (novoParam === '1') {
-      sucessoBox.textContent = '✅ Conta criada! Entra com os teus dados.';
-      sucessoBox.classList.add('ativo');
     }
 
     /* ---------- Mostrar/ocultar senha ---------- */
@@ -309,14 +325,21 @@
       }
     }
 
-    /* ---------- Mostrar erros ---------- */
+    /* ---------- Mostrar erros/sucesso ---------- */
     function mostrarErro(msg) {
       erroBox.textContent = msg;
       erroBox.classList.add('ativo');
       sucessoBox.classList.remove('ativo');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    function esconderErros() {
+    function mostrarSucesso(msg) {
+      sucessoBox.textContent = msg;
+      sucessoBox.classList.add('ativo');
       erroBox.classList.remove('ativo');
+    }
+    function esconder() {
+      erroBox.classList.remove('ativo');
+      sucessoBox.classList.remove('ativo');
     }
 
     /* ---------- Normalizar WhatsApp (só dígitos) ---------- */
@@ -327,53 +350,63 @@
     /* ---------- Submeter ---------- */
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      esconderErros();
+      esconder();
 
+      const nome = nomeInput.value.trim();
       const whatsapp = whatsappInput.value.trim();
       const senha = senhaInput.value;
+      const senha2 = senha2Input.value;
 
-      if (!whatsapp || !senha) {
-        mostrarErro('Preenche o WhatsApp e a senha.');
+      // Validações no cliente
+      if (!nome || nome.length < 3) {
+        mostrarErro('O nome da loja tem que ter pelo menos 3 caracteres.');
         return;
       }
-      if (whatsapp.length < 9) {
-        mostrarErro('WhatsApp inválido.');
+      if (!whatsapp || whatsapp.length < 9) {
+        mostrarErro('O WhatsApp tem que ter pelo menos 9 dígitos.');
+        return;
+      }
+      if (senha.length < 6) {
+        mostrarErro('A senha tem que ter pelo menos 6 caracteres.');
+        return;
+      }
+      if (senha !== senha2) {
+        mostrarErro('As senhas não coincidem.');
         return;
       }
 
-      btnEntrar.disabled = true;
-      btnEntrar.textContent = 'A entrar...';
+      btnRegistar.disabled = true;
+      btnRegistar.textContent = 'A criar conta...';
 
       try {
-        const resp = await fetch(API_URL + '/api/login', {
+        const resp = await fetch(API_URL + '/api/publisher/registar', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ whatsapp, senha }),
+          body: JSON.stringify({ nome, whatsapp, senha }),
         });
 
         const data = await resp.json();
 
         if (!resp.ok || !data.ok) {
-          mostrarErro(data.erro || 'WhatsApp ou senha errados.');
-          btnEntrar.disabled = false;
-          btnEntrar.textContent = 'Entrar';
+          mostrarErro(data.erro || 'Erro ao criar conta.');
+          btnRegistar.disabled = false;
+          btnRegistar.textContent = 'Criar conta';
           return;
         }
 
-        // Guardar token + dados
-        localStorage.setItem('publisher_token', data.token);
-        localStorage.setItem('publisher_nome', data.publisher.nome);
-        localStorage.setItem('publisher_slug', data.publisher.slug);
-        localStorage.setItem('publisher_id', String(data.publisher.id));
-        localStorage.setItem('publisher_whatsapp', data.publisher.whatsapp);
+        // Sucesso
+        mostrarSucesso('Conta criada com sucesso! A redirecionar para o login...');
+        btnRegistar.textContent = 'Conta criada!';
 
-        // Ir para o painel
-        window.location.href = '/painel.html';
+        // Redirecionar para o login com o whatsapp pré-preenchido
+        setTimeout(() => {
+          window.location.href = '/login.html?wpp=' + encodeURIComponent(whatsapp) + '&novo=1';
+        }, 1500);
 
       } catch (err) {
-        mostrarErro('Erro de ligação ao servidor.');
-        btnEntrar.disabled = false;
-        btnEntrar.textContent = 'Entrar';
+        mostrarErro('Erro de ligação ao servidor. Tenta novamente.');
+        btnRegistar.disabled = false;
+        btnRegistar.textContent = 'Criar conta';
       }
     });
   </script>

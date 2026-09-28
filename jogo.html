@@ -61,6 +61,7 @@
       color: var(--texto);
       letter-spacing: -0.2px;
       flex: 1;
+      text-decoration: none;
     }
     .topo-brand span {
       color: rgba(255,255,255,0.5);
@@ -398,7 +399,7 @@
 
   <div class="topo">
     <button class="btn-voltar" onclick="voltar()">←</button>
-    <div class="topo-brand">Publisher <span>ZonaXP</span></div>
+    <a class="topo-brand" href="/index.html">Publisher <span>ZonaXP</span></a>
   </div>
 
   <div class="container" id="app">
@@ -416,8 +417,9 @@
     // ============================================
     const API_URL = 'https://publisher-zonaxp.onrender.com';
 
-    const partes = window.location.pathname.split('/').filter(Boolean);
-    const slug = partes[partes.length - 1];
+    // Ler slug da URL (?slug=xxx)
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('slug');
 
     const app = document.getElementById('app');
     let jogoAtual = null;
@@ -449,7 +451,7 @@
       if (document.referrer && document.referrer.includes(window.location.host)) {
         window.history.back();
       } else {
-        window.location.href = '/';
+        window.location.href = '/index.html';
       }
     }
 
@@ -460,7 +462,7 @@
           <div class="emoji">🔍</div>
           <h2>${titulo}</h2>
           <p>${msg}</p>
-          <p style="margin-top:14px"><a href="/">← Voltar à home</a></p>
+          <p style="margin-top:14px"><a href="/index.html">← Voltar à home</a></p>
         </div>
       `;
     }
@@ -483,7 +485,7 @@
         jogoAtual = data.jogo;
         renderizar(jogoAtual);
 
-        // Verificar se já deu like (localStorage)
+        // Verificar se já deu like
         const likesDados = JSON.parse(localStorage.getItem('likes_dados') || '{}');
         if (likesDados[slug]) {
           jaDeuLike = true;
@@ -498,7 +500,6 @@
     function renderizar(j) {
       document.title = j.nome + ' — Publisher ZonaXP';
 
-      // Aplicar cores da loja
       if (j.coresLoja) aplicarCores(j.coresLoja);
 
       const heroHtml = j.imagem
@@ -517,7 +518,7 @@
             <div class="tag-plataforma">${escapar(j.plataforma)} · ${escapar(j.categoria)}</div>
             <h1>${escapar(j.nome)}</h1>
 
-            <a class="link-loja" href="/loja/${escapar(j.slugLoja)}">
+            <a class="link-loja" href="/loja.html?slug=${escapar(j.slugLoja)}">
               ${avatarLojaHtml}
               <span class="link-loja-texto">por <strong>${escapar(j.nomeLoja)}</strong></span>
               <span style="font-size:14px">→</span>
@@ -557,7 +558,7 @@
         </div>
 
         <div class="rodape">
-          Publicado via <a href="/">Publisher ZonaXP</a>
+          Publicado via <a href="/index.html">Publisher ZonaXP</a>
         </div>
       `;
     }
@@ -571,7 +572,6 @@
       const btn = document.getElementById('btnLike');
       const contador = document.getElementById('likesContador');
 
-      // UI otimista (atualiza logo)
       btn.classList.add('liked');
       contador.textContent = (parseInt(contador.textContent) || 0) + 1;
       jaDeuLike = true;
@@ -585,14 +585,12 @@
         if (resp.ok && data.ok) {
           contador.textContent = data.likes;
 
-          // Guardar no localStorage
           const likesDados = JSON.parse(localStorage.getItem('likes_dados') || '{}');
           likesDados[slug] = true;
           localStorage.setItem('likes_dados', JSON.stringify(likesDados));
 
           toast('Obrigado pelo like! ❤️');
         } else {
-          // Reverter se falhou
           btn.classList.remove('liked');
           contador.textContent = (parseInt(contador.textContent) || 1) - 1;
           jaDeuLike = false;

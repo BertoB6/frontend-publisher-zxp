@@ -47,6 +47,9 @@
     .logo-emoji {
       font-size: 28px;
     }
+    .logo-texto {
+      flex: 1;
+    }
     .logo-texto h1 {
       font-size: 20px;
       font-weight: 800;
@@ -60,6 +63,22 @@
       font-size: 11.5px;
       color: rgba(255,255,255,0.5);
       margin-top: 1px;
+    }
+    .btn-entrar {
+      background: linear-gradient(135deg, var(--primaria), var(--secundaria));
+      color: #fff;
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(255,0,170,0.3);
+    }
+    .btn-entrar:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
     }
 
     .pesquisa {
@@ -330,6 +349,7 @@
           <h1>Publisher ZonaXP</h1>
           <p>O mercado gamer dos criadores</p>
         </div>
+        <a class="btn-entrar" href="/login.html">Entrar</a>
       </div>
 
       <div class="pesquisa">
@@ -355,8 +375,9 @@
 
     <div class="rodape">
       <div>
-        <a href="/login">Sou publisher</a> · 
-        <a href="/pesquisa">Explorar</a>
+        <a href="/login.html">Sou publisher</a> ·
+        <a href="/registo.html">Criar conta</a> ·
+        <a href="/pesquisa.html">Explorar</a>
       </div>
       <div style="margin-top: 6px;">© Publisher ZonaXP</div>
     </div>
@@ -365,10 +386,8 @@
 
   <script>
     // ============================================
-    // CONFIGURAÇÃO — URL da API
+    // CONFIGURAÇÃO
     // ============================================
-    // LOCAL:      'http://localhost:3001'
-    // PRODUÇÃO:   'https://publisher-zonaxp.onrender.com'
     const API_URL = 'https://publisher-zonaxp.onrender.com';
 
     let ordemAtual = 'recentes';
@@ -394,7 +413,7 @@
     pesquisaInput.addEventListener('keydown', e => {
       if (e.key === 'Enter') {
         const q = pesquisaInput.value.trim();
-        if (q) window.location.href = '/pesquisa?q=' + encodeURIComponent(q);
+        if (q) window.location.href = '/pesquisa.html?q=' + encodeURIComponent(q);
       }
     });
 
@@ -453,7 +472,7 @@
           <div class="card-info">
             <div class="card-nome">${escapar(j.nome)}</div>
             <div class="card-rodape">
-              <a class="card-loja" href="/loja/${escapar(j.slugLoja)}" onclick="event.stopPropagation()">
+              <a class="card-loja" href="/loja.html?slug=${escapar(j.slugLoja)}" onclick="event.stopPropagation()">
                 ${avatarHtml}
                 <span class="card-loja-nome">${escapar(j.nomeLoja)}</span>
               </a>
@@ -468,7 +487,7 @@
     }
 
     function irParaJogo(slug) {
-      window.location.href = '/jogo/' + slug;
+      window.location.href = '/jogo.html?slug=' + slug;
     }
 
     function mostrarErro(msg) {

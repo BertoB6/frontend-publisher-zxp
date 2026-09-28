@@ -52,6 +52,7 @@
       font-family: inherit;
       transition: all 0.15s;
       flex-shrink: 0;
+      text-decoration: none;
     }
     .btn-voltar:hover {
       border-color: var(--primaria);
@@ -361,7 +362,7 @@
 
   <header>
     <div class="header-inner">
-      <button class="btn-voltar" onclick="window.location.href='/'">←</button>
+      <a class="btn-voltar" href="/index.html">←</a>
       <div class="pesquisa">
         <span class="pesquisa-icone">🔍</span>
         <input type="text" id="pesquisaInput" placeholder="Pesquisar jogos, lojas...">
@@ -378,18 +379,17 @@
 
   <script>
     // ============================================
-    // CONFIGURAÇÃO — URL da API
+    // CONFIGURAÇÃO
     // ============================================
     const API_URL = 'https://publisher-zonaxp.onrender.com';
 
     const conteudo = document.getElementById('conteudo');
     const pesquisaInput = document.getElementById('pesquisaInput');
 
-    // Obter query da URL: ?q=texto
+    // Ler query da URL
     const params = new URLSearchParams(window.location.search);
     const query = (params.get('q') || '').trim();
 
-    // Preencher o input com a query
     pesquisaInput.value = query;
 
     function escapar(s) {
@@ -398,15 +398,15 @@
       }[c]));
     }
 
-    /* ---------- Nova pesquisa (atualiza URL) ---------- */
+    /* ---------- Nova pesquisa ---------- */
     pesquisaInput.addEventListener('keydown', e => {
       if (e.key === 'Enter') {
         const q = pesquisaInput.value.trim();
-        if (q) window.location.href = '/pesquisa?q=' + encodeURIComponent(q);
+        if (q) window.location.href = '/pesquisa.html?q=' + encodeURIComponent(q);
       }
     });
 
-    /* ---------- Carregar resultados ---------- */
+    /* ---------- Carregar ---------- */
     async function carregar() {
       if (!query) {
         document.title = 'Pesquisa — Publisher ZonaXP';
@@ -455,7 +455,7 @@
           <div class="vazio">
             <div class="vazio-emoji">😕</div>
             <div class="vazio-titulo">Sem resultados</div>
-            <div class="vazio-txt">Tenta pesquisar com outro nome.<br><a href="/">Voltar à home</a></div>
+            <div class="vazio-txt">Tenta pesquisar com outro nome.<br><a href="/index.html">Voltar à home</a></div>
           </div>
         `;
         return;
@@ -463,13 +463,12 @@
 
       let html = `
         <div class="info-query">
-          Resultados para <strong>"${escapar(query)}"</strong> — 
-          ${jogos.length} ${jogos.length === 1 ? 'jogo' : 'jogos'}, 
+          Resultados para <strong>"${escapar(query)}"</strong> —
+          ${jogos.length} ${jogos.length === 1 ? 'jogo' : 'jogos'},
           ${lojas.length} ${lojas.length === 1 ? 'loja' : 'lojas'}
         </div>
       `;
 
-      // Jogos
       if (jogos.length > 0) {
         html += `
           <div class="secao">
@@ -484,7 +483,6 @@
         `;
       }
 
-      // Lojas
       if (lojas.length > 0) {
         html += `
           <div class="secao">
@@ -516,7 +514,7 @@
           <div class="card-info">
             <div class="card-nome">${escapar(j.nome)}</div>
             <div class="card-rodape">
-              <a class="card-loja" href="/loja/${escapar(j.slugLoja)}" onclick="event.stopPropagation()">
+              <a class="card-loja" href="/loja.html?slug=${escapar(j.slugLoja)}" onclick="event.stopPropagation()">
                 ${avatarHtml}
                 <span class="card-loja-nome">${escapar(j.nomeLoja)}</span>
               </a>
@@ -539,7 +537,7 @@
       const jogos = `${l.totalJogos} ${l.totalJogos === 1 ? 'jogo' : 'jogos'}`;
 
       return `
-        <a class="card-loja-item" href="/loja/${escapar(l.slug)}">
+        <a class="card-loja-item" href="/loja.html?slug=${escapar(l.slug)}">
           ${avatarHtml}
           <div class="loja-info">
             <div class="loja-nome">${escapar(l.nome)}</div>
@@ -551,7 +549,7 @@
     }
 
     function irParaJogo(slug) {
-      window.location.href = '/jogo/' + slug;
+      window.location.href = '/jogo.html?slug=' + slug;
     }
 
     function mostrarErro(msg) {
@@ -564,7 +562,6 @@
       `;
     }
 
-    /* ---------- Iniciar ---------- */
     carregar();
   </script>
 </body>

@@ -3,21 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Publicar Jogo — ZonaXP Publishers</title>
+  <title>Publicar Jogo — Publisher ZonaXP</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primaria: #ff00aa;
+      --secundaria: #00aaff;
+      --fundo: #0a0a1a;
+      --cards: #15152a;
+      --texto: #ffffff;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f5f5f7;
+      background: var(--fundo);
       min-height: 100vh;
-      color: #1a1a1a;
+      color: var(--texto);
       padding-bottom: 60px;
     }
 
     /* HEADER */
     header {
-      background: #fff;
-      border-bottom: 1px solid #e8e8e8;
+      background: rgba(10,10,26,0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
       padding: 16px 20px;
       display: flex;
       align-items: center;
@@ -27,17 +38,20 @@
       z-index: 10;
     }
     .btn-voltar {
-      background: #fff;
-      border: 1.5px solid #e5e5e5;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      color: var(--texto);
       padding: 8px 12px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 15px;
       cursor: pointer;
       font-family: inherit;
       transition: all 0.15s;
+      flex-shrink: 0;
     }
     .btn-voltar:hover {
-      border-color: #1a1a1a;
+      border-color: var(--primaria);
+      background: rgba(255,0,170,0.1);
     }
     header h1 {
       font-size: 16px;
@@ -54,10 +68,10 @@
 
     /* CARD */
     .card {
-      background: #fff;
-      border-radius: 14px;
-      border: 1px solid #eee;
-      padding: 24px 20px;
+      background: var(--cards);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 22px 20px;
     }
 
     /* CAMPOS */
@@ -68,37 +82,38 @@
 
     label {
       display: block;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
-      color: #444;
+      color: rgba(255,255,255,0.7);
       margin-bottom: 6px;
     }
-    label .obrig {
-      color: #d00;
-      margin-left: 2px;
-    }
+    label .obrig { color: var(--primaria); margin-left: 2px; }
     label .opc {
-      color: #aaa;
+      color: rgba(255,255,255,0.35);
       font-weight: 400;
-      font-size: 11.5px;
+      font-size: 11px;
       margin-left: 4px;
     }
 
     input, select, textarea {
       width: 100%;
       padding: 12px 14px;
-      border: 1.5px solid #e5e5e5;
+      border: 1.5px solid rgba(255,255,255,0.1);
       border-radius: 10px;
       font-size: 14.5px;
-      background: #fafafa;
+      background: rgba(0,0,0,0.25);
+      color: var(--texto);
       transition: all 0.2s;
       font-family: inherit;
-      color: #1a1a1a;
     }
     input:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: #1a1a1a;
-      background: #fff;
+      border-color: var(--primaria);
+      background: rgba(0,0,0,0.4);
+      box-shadow: 0 0 0 3px rgba(255,0,170,0.15);
+    }
+    input::placeholder, textarea::placeholder {
+      color: rgba(255,255,255,0.3);
     }
     textarea {
       resize: vertical;
@@ -107,6 +122,21 @@
     }
     textarea.longa {
       min-height: 160px;
+      font-family: inherit;
+    }
+    select {
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+      padding-right: 40px;
+    }
+    select option {
+      background: var(--cards);
+      color: var(--texto);
     }
 
     /* GRID 2 COLUNAS */
@@ -114,6 +144,10 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
+    }
+    @media (max-width: 480px) {
+      .grid2 { grid-template-columns: 1fr; gap: 0; }
+      .grid2 .campo { margin-bottom: 18px; }
     }
 
     /* PREVIEW IMAGEM */
@@ -123,19 +157,30 @@
       aspect-ratio: 1/1;
       max-width: 120px;
       border-radius: 10px;
-      border: 1.5px dashed #ddd;
-      background: #fafafa center/cover no-repeat;
+      border: 1.5px dashed rgba(255,255,255,0.15);
+      background: rgba(0,0,0,0.3);
+      background-size: cover;
+      background-position: center;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #bbb;
+      color: rgba(255,255,255,0.3);
       font-size: 11px;
       text-align: center;
       padding: 10px;
     }
     .preview.tem-img {
       border-style: solid;
-      border-color: #e5e5e5;
+      border-color: rgba(255,255,255,0.1);
+    }
+
+    /* DICA */
+    .dica {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 6px;
+      padding-left: 2px;
+      line-height: 1.4;
     }
 
     /* BOTÕES */
@@ -146,46 +191,49 @@
     }
     .acoes button {
       flex: 1;
-      padding: 13px;
-      border-radius: 10px;
+      padding: 14px;
+      border-radius: 12px;
       font-size: 15px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       font-family: inherit;
       border: none;
       transition: all 0.15s;
     }
     .btn-cancelar {
-      background: #f0f0f0;
-      color: #333;
+      background: rgba(255,255,255,0.08);
+      color: var(--texto);
     }
     .btn-cancelar:hover {
-      background: #e5e5e5;
+      background: rgba(255,255,255,0.15);
     }
     .btn-guardar {
-      background: #1a1a1a;
+      background: linear-gradient(135deg, var(--primaria), var(--secundaria));
       color: #fff;
+      box-shadow: 0 4px 16px rgba(255,0,170,0.3);
     }
     .btn-guardar:hover {
-      background: #000;
+      filter: brightness(1.15);
       transform: translateY(-1px);
     }
     .btn-guardar:disabled {
-      background: #ccc;
+      opacity: 0.5;
       cursor: not-allowed;
       transform: none;
+      filter: none;
     }
 
     /* ERRO */
     .erro {
-      background: #fff0f0;
-      border: 1px solid #ffcccc;
+      background: rgba(255,0,0,0.15);
+      border: 1px solid rgba(255,80,80,0.4);
       border-radius: 10px;
       padding: 12px 14px;
       font-size: 13px;
-      color: #c00;
+      color: #ff8888;
       margin-bottom: 16px;
       display: none;
+      line-height: 1.5;
     }
     .erro.ativo { display: block; }
     .erro ul {
@@ -194,14 +242,31 @@
     }
     .erro li { margin-bottom: 2px; }
 
+    /* LOADING */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(255,255,255,0.4);
+    }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(255,255,255,0.08);
+      border-top-color: var(--primaria);
+      border-radius: 50%;
+      animation: girar 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes girar { to { transform: rotate(360deg); } }
+
     /* TOAST */
     .toast {
       position: fixed;
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: #1a1a1a;
-      color: #fff;
+      background: var(--cards);
+      color: var(--texto);
       padding: 12px 20px;
       border-radius: 10px;
       font-size: 14px;
@@ -209,44 +274,31 @@
       transition: transform 0.3s;
       z-index: 200;
       max-width: 90%;
+      border: 1px solid rgba(255,255,255,0.1);
     }
     .toast.ativo { transform: translateX(-50%) translateY(0); }
-    .toast.erro { background: #d00; }
-
-    /* DICA */
-    .dica {
-      background: #f0f7ff;
-      border: 1px solid #cce0ff;
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 12px;
-      color: #004080;
-      margin-top: 6px;
-      line-height: 1.4;
-    }
+    .toast.erro { background: #d00; border-color: #d00; }
   </style>
 </head>
 <body>
 
   <header>
-    <button class="btn-voltar" onclick="window.location.href='/painel'">←</button>
+    <button class="btn-voltar" onclick="window.location.href='/painel.html'">←</button>
     <h1 id="titulo">Publicar novo jogo</h1>
   </header>
 
   <div class="container">
-    <div class="card">
+    <div class="card" id="card">
 
       <div class="erro" id="erro"></div>
 
       <form id="formJogo">
 
-        <!-- NOME -->
         <div class="campo">
           <label>Nome do jogo <span class="obrig">*</span></label>
           <input type="text" id="nome" placeholder="Ex: Mortal Kombat Mod" required>
         </div>
 
-        <!-- CATEGORIA + PLATAFORMA -->
         <div class="grid2">
           <div class="campo">
             <label>Categoria <span class="obrig">*</span></label>
@@ -264,14 +316,12 @@
           </div>
         </div>
 
-        <!-- IMAGEM -->
         <div class="campo">
           <label>URL da imagem <span class="obrig">*</span></label>
           <input type="url" id="imagem" placeholder="https://..." required oninput="atualizarPreview()">
           <div class="preview" id="preview">Sem imagem</div>
         </div>
 
-        <!-- TAMANHO + SENHA -->
         <div class="grid2">
           <div class="campo">
             <label>Tamanho <span class="obrig">*</span></label>
@@ -283,43 +333,51 @@
           </div>
         </div>
 
-        <!-- DOWNLOAD -->
         <div class="campo">
           <label>Link de download <span class="obrig">*</span></label>
           <input type="url" id="download" placeholder="https://mega.nz/..." required>
         </div>
 
-        <!-- DESCRIÇÃO CURTA -->
         <div class="campo">
           <label>Descrição curta <span class="obrig">*</span></label>
           <textarea id="descricao_curta" placeholder="Uma linha rápida sobre o jogo." maxlength="200" required></textarea>
-          <div class="dica">Máximo 200 caracteres. Aparece na listagem de jogos.</div>
+          <div class="dica">Máximo 200 caracteres. Aparece nos cards do mercado.</div>
         </div>
 
-        <!-- DESCRIÇÃO LONGA -->
         <div class="campo">
           <label>Descrição longa <span class="obrig">*</span></label>
           <textarea id="descricao_longa" class="longa" placeholder="Descrição completa.&#10;&#10;- Podes usar várias linhas&#10;- Listas com hífens&#10;- Quebras de linha são preservadas" required></textarea>
           <div class="dica">Aceita várias linhas. As quebras de linha são preservadas.</div>
         </div>
 
-        <!-- BOTÕES -->
         <div class="acoes">
-          <button type="button" class="btn-cancelar" onclick="window.location.href='/painel'">Cancelar</button>
+          <button type="button" class="btn-cancelar" onclick="window.location.href='/painel.html'">Cancelar</button>
           <button type="submit" class="btn-guardar" id="btnGuardar">Publicar</button>
         </div>
 
       </form>
+    </div>
+
+    <div id="loadingContainer" style="display:none">
+      <div class="loading">
+        <div class="spinner"></div>
+        A carregar jogo...
+      </div>
     </div>
   </div>
 
   <div class="toast" id="toast"></div>
 
   <script>
-    const TOKEN = localStorage.getItem('publisher_token');
-    if (!TOKEN) window.location.href = '/login';
+    // ============================================
+    // CONFIGURAÇÃO
+    // ============================================
+    const API_URL = 'https://publisher-zonaxp.onrender.com';
 
-    // Ver se é edição (tem ?id=X no URL)
+    const TOKEN = localStorage.getItem('publisher_token');
+    if (!TOKEN) window.location.href = '/login.html';
+
+    // Modo edição?
     const params = new URLSearchParams(window.location.search);
     const jogoId = params.get('id');
     const modoEdicao = !!jogoId;
@@ -328,6 +386,10 @@
       document.getElementById('titulo').textContent = 'Editar jogo';
       document.getElementById('btnGuardar').textContent = 'Guardar alterações';
     }
+
+    const form = document.getElementById('formJogo');
+    const card = document.getElementById('card');
+    const loadingContainer = document.getElementById('loadingContainer');
 
     /* ---------- Toast ---------- */
     function toast(msg, erro = false) {
@@ -376,23 +438,26 @@
       img.src = url;
     }
 
-    /* ---------- Carregar jogo (modo edição) ---------- */
+    /* ---------- Carregar jogo (edição) ---------- */
     async function carregarJogo() {
+      card.style.display = 'none';
+      loadingContainer.style.display = 'block';
+
       try {
-        const resp = await fetch('/api/jogos/' + jogoId, {
+        const resp = await fetch(API_URL + '/api/jogos/' + jogoId, {
           headers: { 'Authorization': 'Bearer ' + TOKEN }
         });
 
         if (resp.status === 401) {
           localStorage.clear();
-          window.location.href = '/login';
+          window.location.href = '/login.html';
           return;
         }
 
         const data = await resp.json();
         if (!resp.ok) {
           toast(data.erro || 'Jogo não encontrado.', true);
-          setTimeout(() => window.location.href = '/painel', 1500);
+          setTimeout(() => window.location.href = '/painel.html', 1500);
           return;
         }
 
@@ -411,11 +476,14 @@
 
       } catch (e) {
         toast('Erro a carregar o jogo.', true);
+      } finally {
+        card.style.display = 'block';
+        loadingContainer.style.display = 'none';
       }
     }
 
     /* ---------- Submeter ---------- */
-    document.getElementById('formJogo').addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       esconderErro();
 
@@ -436,7 +504,7 @@
       };
 
       try {
-        const url = modoEdicao ? '/api/jogos/' + jogoId : '/api/jogos';
+        const url = modoEdicao ? API_URL + '/api/jogos/' + jogoId : API_URL + '/api/jogos';
         const metodo = modoEdicao ? 'PUT' : 'POST';
 
         const resp = await fetch(url, {
@@ -462,7 +530,7 @@
         }
 
         toast(modoEdicao ? 'Alterações guardadas!' : 'Jogo publicado!');
-        setTimeout(() => window.location.href = '/painel', 800);
+        setTimeout(() => window.location.href = '/painel.html', 800);
 
       } catch (err) {
         mostrarErro('Erro de ligação ao servidor.');

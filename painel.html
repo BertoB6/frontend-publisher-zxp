@@ -3,60 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel — ZonaXP Publishers</title>
+  <title>Painel — Publisher ZonaXP</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primaria: #ff00aa;
+      --secundaria: #00aaff;
+      --fundo: #0a0a1a;
+      --cards: #15152a;
+      --texto: #ffffff;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f5f5f7;
+      background: var(--fundo);
       min-height: 100vh;
-      color: #1a1a1a;
+      color: var(--texto);
       padding-bottom: 40px;
     }
 
     /* HEADER */
     header {
-      background: #fff;
-      border-bottom: 1px solid #e8e8e8;
+      background: rgba(10,10,26,0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
       padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       position: sticky;
       top: 0;
       z-index: 10;
     }
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
     .header-info h1 {
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: -0.3px;
+      background: linear-gradient(90deg, var(--primaria), var(--secundaria));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
     .header-info p {
-      font-size: 12px;
-      color: #888;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.5);
       margin-top: 2px;
     }
     .btn-sair {
-      background: #fff;
-      border: 1.5px solid #e5e5e5;
-      color: #666;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      color: var(--texto);
       padding: 8px 14px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.15s;
       font-family: inherit;
+      flex-shrink: 0;
     }
     .btn-sair:hover {
-      border-color: #ffcccc;
-      color: #c00;
-      background: #fff5f5;
+      border-color: rgba(255,80,80,0.5);
+      color: #ff8888;
+      background: rgba(255,0,0,0.1);
     }
 
     /* CONTAINER */
     .container {
-      max-width: 720px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 20px;
     }
@@ -66,67 +87,98 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .stat {
-      background: #fff;
+      background: var(--cards);
       border-radius: 12px;
       padding: 18px;
-      border: 1px solid #eee;
+      border: 1px solid rgba(255,255,255,0.06);
     }
     .stat-label {
-      font-size: 12px;
-      color: #888;
-      font-weight: 600;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.5);
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.3px;
     }
     .stat-valor {
       font-size: 28px;
-      font-weight: 700;
+      font-weight: 800;
       margin-top: 6px;
       letter-spacing: -0.5px;
+      background: linear-gradient(90deg, var(--primaria), var(--secundaria));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-link {
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      background: linear-gradient(90deg, var(--primaria), var(--secundaria));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      word-break: break-all;
     }
 
-    /* BOTÃO NOVO */
-    .btn-novo {
+    /* BOTÕES GRANDES */
+    .botoes-principais {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .btn-grande {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      width: 100%;
       padding: 15px;
-      background: #1a1a1a;
-      color: #fff;
       border: none;
       border-radius: 12px;
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
       font-family: inherit;
-      margin-bottom: 20px;
+      text-decoration: none;
+      color: #fff;
+      text-align: center;
     }
-    .btn-novo:hover {
-      background: #000;
+    .btn-grande.primario {
+      background: linear-gradient(135deg, var(--primaria), var(--secundaria));
+      box-shadow: 0 4px 16px rgba(255,0,170,0.3);
+    }
+    .btn-grande.primario:hover {
+      filter: brightness(1.15);
       transform: translateY(-1px);
+    }
+    .btn-grande.secundario {
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.1);
+    }
+    .btn-grande.secundario:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--secundaria);
     }
 
     /* LISTA */
     .lista-titulo {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
-      color: #666;
+      color: rgba(255,255,255,0.55);
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 12px;
       padding: 0 4px;
     }
     .jogo-card {
-      background: #fff;
-      border-radius: 12px;
-      border: 1px solid #eee;
-      padding: 14px;
+      background: var(--cards);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 12px;
       display: flex;
       gap: 14px;
       align-items: center;
@@ -134,15 +186,14 @@
       transition: all 0.15s;
     }
     .jogo-card:hover {
-      border-color: #ddd;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border-color: rgba(255,0,170,0.3);
     }
     .jogo-img {
       width: 60px;
       height: 60px;
       border-radius: 10px;
       object-fit: cover;
-      background: #f0f0f0;
+      background: #0a0a1a;
       flex-shrink: 0;
     }
     .jogo-info {
@@ -151,15 +202,23 @@
     }
     .jogo-nome {
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-bottom: 4px;
     }
     .jogo-meta {
-      font-size: 12px;
-      color: #888;
-      margin-top: 4px;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.5);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .jogo-meta .likes {
+      color: var(--primaria);
+      font-weight: 700;
     }
     .jogo-acoes {
       display: flex;
@@ -167,11 +226,12 @@
       flex-shrink: 0;
     }
     .btn-acao {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      border: 1.5px solid #eee;
-      background: #fff;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+      color: var(--texto);
       cursor: pointer;
       font-size: 15px;
       display: flex;
@@ -181,56 +241,72 @@
       font-family: inherit;
     }
     .btn-acao:hover {
-      border-color: #1a1a1a;
-      background: #f8f8f8;
+      border-color: var(--primaria);
+      background: rgba(255,0,170,0.1);
     }
     .btn-acao.apagar:hover {
-      border-color: #ffcccc;
-      background: #fff5f5;
+      border-color: rgba(255,80,80,0.5);
+      background: rgba(255,0,0,0.1);
     }
 
     /* VAZIO */
     .vazio {
       text-align: center;
       padding: 60px 20px;
-      color: #999;
+      color: rgba(255,255,255,0.4);
+      background: var(--cards);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
     }
     .vazio-emoji {
       font-size: 48px;
       margin-bottom: 12px;
+      opacity: 0.6;
     }
     .vazio-txt {
-      font-size: 14px;
+      font-size: 13.5px;
+      line-height: 1.5;
     }
 
     /* LOADING */
     .loading {
       text-align: center;
       padding: 40px;
-      color: #999;
+      color: rgba(255,255,255,0.4);
       font-size: 14px;
     }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(255,255,255,0.08);
+      border-top-color: var(--primaria);
+      border-radius: 50%;
+      animation: girar 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes girar { to { transform: rotate(360deg); } }
 
-    /* MODAL CONFIRMAÇÃO */
+    /* MODAL */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       display: none;
       align-items: center;
       justify-content: center;
       padding: 20px;
       z-index: 100;
     }
-    .modal-overlay.ativo {
-      display: flex;
-    }
+    .modal-overlay.ativo { display: flex; }
     .modal {
-      background: #fff;
+      background: var(--cards);
       border-radius: 16px;
       padding: 24px;
-      max-width: 340px;
+      max-width: 360px;
       width: 100%;
+      border: 1px solid rgba(255,255,255,0.1);
     }
     .modal h3 {
       font-size: 17px;
@@ -238,7 +314,7 @@
     }
     .modal p {
       font-size: 14px;
-      color: #666;
+      color: rgba(255,255,255,0.65);
       margin-bottom: 20px;
       line-height: 1.5;
     }
@@ -251,26 +327,22 @@
       padding: 12px;
       border-radius: 10px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       font-family: inherit;
       border: none;
       transition: all 0.15s;
     }
     .btn-cancelar {
-      background: #f0f0f0;
-      color: #333;
+      background: rgba(255,255,255,0.08);
+      color: var(--texto);
     }
-    .btn-cancelar:hover {
-      background: #e5e5e5;
-    }
+    .btn-cancelar:hover { background: rgba(255,255,255,0.15); }
     .btn-confirmar {
       background: #d00;
       color: #fff;
     }
-    .btn-confirmar:hover {
-      background: #b00;
-    }
+    .btn-confirmar:hover { background: #b00; }
 
     /* TOAST */
     .toast {
@@ -278,8 +350,8 @@
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: #1a1a1a;
-      color: #fff;
+      background: var(--cards);
+      color: var(--texto);
       padding: 12px 20px;
       border-radius: 10px;
       font-size: 14px;
@@ -287,46 +359,55 @@
       transition: transform 0.3s;
       z-index: 200;
       max-width: 90%;
+      border: 1px solid rgba(255,255,255,0.1);
     }
-    .toast.ativo {
-      transform: translateX(-50%) translateY(0);
-    }
-    .toast.erro {
-      background: #d00;
-    }
+    .toast.ativo { transform: translateX(-50%) translateY(0); }
+    .toast.erro { background: #d00; border-color: #d00; }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="header-info">
-      <h1 id="nomePublisher">A carregar...</h1>
-      <p>ZonaXP Publishers</p>
+    <div class="header-inner">
+      <div class="header-info">
+        <h1 id="nomePublisher">A carregar...</h1>
+        <p>Painel do publisher</p>
+      </div>
+      <button class="btn-sair" onclick="sair()">Sair</button>
     </div>
-    <button class="btn-sair" onclick="sair()">Sair</button>
   </header>
 
   <div class="container">
 
     <div class="stats">
       <div class="stat">
-        <div class="stat-label">Jogos</div>
+        <div class="stat-label">Jogos publicados</div>
         <div class="stat-valor" id="statJogos">0</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Loja</div>
-        <div class="stat-valor" id="statLoja" style="font-size:14px;padding-top:10px;">—</div>
+        <div class="stat-label">A minha loja</div>
+        <div style="margin-top:8px">
+          <a id="linkLoja" class="stat-link" href="#" target="_blank">—</a>
+        </div>
       </div>
     </div>
 
-    <button class="btn-novo" onclick="window.location.href='/painel/publicar'">
-      ➕ Publicar novo jogo
-    </button>
+    <div class="botoes-principais">
+      <a class="btn-grande primario" href="/painel-publicar.html">
+        ➕ Publicar jogo
+      </a>
+      <a class="btn-grande secundario" href="/painel-loja.html">
+        ⚙️ Configurar loja
+      </a>
+    </div>
 
     <div class="lista-titulo">Os meus jogos</div>
 
     <div id="lista">
-      <div class="loading">A carregar jogos...</div>
+      <div class="loading">
+        <div class="spinner"></div>
+        A carregar...
+      </div>
     </div>
 
   </div>
@@ -347,22 +428,26 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const TOKEN = localStorage.getItem('publisher_token');
+    // ============================================
+    // CONFIGURAÇÃO
+    // ============================================
+    const API_URL = 'https://publisher-zonaxp.onrender.com';
 
-    // Se não tem token → volta para login
+    const TOKEN = localStorage.getItem('publisher_token');
     if (!TOKEN) {
-      window.location.href = '/login';
+      window.location.href = '/login.html';
     }
 
-    // Mostrar nome do publisher
+    // Nome do publisher
     const nomeGuardado = localStorage.getItem('publisher_nome') || 'Publisher';
     document.getElementById('nomePublisher').textContent = nomeGuardado;
 
-    // Slug da loja
+    // Link da loja
     const slugLoja = localStorage.getItem('publisher_slug') || '';
     if (slugLoja) {
-      document.getElementById('statLoja').innerHTML =
-        `<a href="/loja/${slugLoja}" target="_blank" style="color:#1a1a1a;text-decoration:none;font-weight:700;">/loja/${slugLoja} ↗</a>`;
+      const link = document.getElementById('linkLoja');
+      link.href = '/loja.html?slug=' + slugLoja;
+      link.textContent = '/loja/' + slugLoja;
     }
 
     let jogoParaApagar = null;
@@ -377,17 +462,22 @@
 
     /* ---------- Sair ---------- */
     function sair() {
-      localStorage.removeItem('publisher_token');
-      localStorage.removeItem('publisher_nome');
-      localStorage.removeItem('publisher_slug');
-      window.location.href = '/login';
+      localStorage.clear();
+      window.location.href = '/login.html';
+    }
+
+    /* ---------- Escapar HTML ---------- */
+    function escapar(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
     }
 
     /* ---------- Carregar jogos ---------- */
     async function carregarJogos() {
       const lista = document.getElementById('lista');
       try {
-        const resp = await fetch('/api/jogos', {
+        const resp = await fetch(API_URL + '/api/jogos', {
           headers: { 'Authorization': 'Bearer ' + TOKEN }
         });
 
@@ -405,7 +495,7 @@
           lista.innerHTML = `
             <div class="vazio">
               <div class="vazio-emoji">📦</div>
-              <div class="vazio-txt">Ainda não publicaste nenhum jogo.<br>Clica em "Publicar novo jogo" para começar.</div>
+              <div class="vazio-txt">Ainda não publicaste nenhum jogo.<br>Clica em "Publicar jogo" para começar.</div>
             </div>
           `;
           return;
@@ -413,14 +503,19 @@
 
         lista.innerHTML = jogos.map(j => `
           <div class="jogo-card">
-            <img class="jogo-img" src="${escapar(j.imagem)}" alt="" onerror="this.style.background='#eee';this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 60 60%22><rect width=%2260%22 height=%2260%22 fill=%22%23f0f0f0%22/><text x=%2230%22 y=%2236%22 font-size=%2224%22 text-anchor=%22middle%22>🎮</text></svg>'">
+            <img class="jogo-img" src="${escapar(j.imagem)}" alt="" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 60 60%22><rect width=%2260%22 height=%2260%22 fill=%22%2315152a%22/><text x=%2230%22 y=%2236%22 font-size=%2224%22 text-anchor=%22middle%22>🎮</text></svg>'">
             <div class="jogo-info">
               <div class="jogo-nome">${escapar(j.nome)}</div>
-              <div class="jogo-meta">${escapar(j.plataforma)} • ${escapar(j.categoria)}</div>
+              <div class="jogo-meta">
+                <span>${escapar(j.plataforma)}</span>
+                <span>·</span>
+                <span>${escapar(j.categoria)}</span>
+                <span class="likes">❤️ ${j.likes || 0}</span>
+              </div>
             </div>
             <div class="jogo-acoes">
-              <button class="btn-acao" title="Ver público" onclick="window.open('/jogo/${j.slug}','_blank')">👁️</button>
-              <button class="btn-acao" title="Editar" onclick="window.location.href='/painel/publicar?id=${j.id}'">✏️</button>
+              <button class="btn-acao" title="Ver público" onclick="verJogo('${escapar(j.slug)}')">👁️</button>
+              <button class="btn-acao" title="Editar" onclick="editarJogo(${j.id})">✏️</button>
               <button class="btn-acao apagar" title="Apagar" onclick="pedirApagar(${j.id}, '${escapar(j.nome).replace(/'/g,"\\'")}')">🗑️</button>
             </div>
           </div>
@@ -429,6 +524,15 @@
       } catch (e) {
         lista.innerHTML = '<div class="vazio"><div class="vazio-emoji">⚠️</div><div class="vazio-txt">Erro a carregar. O servidor está ligado?</div></div>';
       }
+    }
+
+    /* ---------- Ações ---------- */
+    function verJogo(slug) {
+      window.open('/jogo.html?slug=' + slug, '_blank');
+    }
+
+    function editarJogo(id) {
+      window.location.href = '/painel-publicar.html?id=' + id;
     }
 
     /* ---------- Apagar ---------- */
@@ -450,7 +554,7 @@
       fecharModal();
 
       try {
-        const resp = await fetch('/api/jogos/' + id, {
+        const resp = await fetch(API_URL + '/api/jogos/' + id, {
           method: 'DELETE',
           headers: { 'Authorization': 'Bearer ' + TOKEN }
         });
@@ -465,13 +569,6 @@
       } catch (e) {
         toast('Erro de ligação.', true);
       }
-    }
-
-    /* ---------- Escapar HTML ---------- */
-    function escapar(s) {
-      return String(s ?? '').replace(/[&<>"']/g, c => ({
-        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-      }[c]));
     }
 
     /* ---------- Iniciar ---------- */

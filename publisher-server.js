@@ -1,8 +1,10 @@
 /* =========================================================
-   PUBLISHER SERVER — ZonaXP (versão API 2.0)
+   PUBLISHER SERVER — ZonaXP (v3.0 — Multi-Publisher)
    ---------------------------------------------------------
-   - Login fixo (Fase 1)
-   - CRUD de jogos
+   - Registo real com WhatsApp + senha
+   - Login por WhatsApp + senha
+   - Tokens únicos por publisher
+   - Cada publisher vê só os SEUS jogos
    - Feed + pesquisa + likes
    - Edição de loja (cores, bio, avatar, capa)
    - Dados no GitHub + cache em memória
@@ -12,28 +14,30 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const TOKEN_FIXO = process.env.TOKEN_FIXO || 'zonaxp-editor-2025';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_REPO = process.env.GITHUB_REPO;
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main';
 
-/* ---------- Credenciais fixas (Fase 1) ---------- */
-const LOGIN_FIXO = {
+/* ---------- Publisher fixo (para o dono) ---------- */
+const PUBLISHER_FIXO = {
   nome: 'ZonaXP Membro',
+  whatsapp: '840000000',
   senha: 'Editor.Jogos',
 };
 
-/* ---------- Cores padrão ZonaXP (identidade da marca) ---------- */
+/* ---------- Cores padrão ZonaXP ---------- */
 const CORES_ZONAXP = {
-  primaria: '#ff00aa',   // rosa neon
-  secundaria: '#00aaff', // azul neon
-  fundo: '#0a0a1a',      // fundo escuro
-  cards: '#1a1a2e',      // cards escuros
-  texto: '#ffffff',      // texto branco
+  primaria: '#ff00aa',
+  secundaria: '#00aaff',
+  fundo: '#0a0a1a',
+  cards: '#1a1a2e',
+  texto: '#ffffff',
 };
 
 /* ---------- Verificar variáveis obrigatórias ---------- */
@@ -147,13 +151,34 @@ async function obterPublishers() {
   const { dados } = await lerJSONdoGitHub(FICH_PUBLISHERS);
   cachePublishers = dados || { publishers: [] };
 
-  // Garantir campos novos em publishers antigos
-  cachePublishers.publishers = cachePublishers.publishers.map(p => ({
-    ...p,
-    avatar: p.avatar || '',
-    capa: p.capa || '',
-    cores: p.cores || { ...CORES_ZONAXP },
-  }));
+  // Migração: garantir campos em publishers antigos
+  let precisaGravar = false;
+  cachePublishers.publishers = cachePublishers.publishers.map(p => {
+    const novo = { ...p };
+    if (!novo.cores) novo.cores = { ...CORES_ZONAXP };
+    if (novo.avatar === undefined) novo.avatar = '';
+    if (novo.capa === undefined) novo.capa = '';
+    if (!novo.status) novo.status = 'ativo';
+    return novo;
+  });
+
+  // Se o publisher 1 existir e não tiver senha/token, é preciso migrar
+  if (cachePublishers.publishers.length > 0) {
+    for (const p of cachePublishers.publishers) {
+      if (!p.senhaHash || !p.token) {
+        precisaGravar = true;
+        // Se for o publisher fixo (nome "ZonaXP Membro"), dar senha fixa
+        if (p.nome === PUBLISHER_FIXO.nome) {
+          p.senhaHash = await bcrypt.hash(PUBLISHER_FIXO.senha, 10);
+          p.token = gerarToken();
+        }
+      }
+    }
+    if (precisaGravar) {
+      await gravarJSONnoGitHub(FICH_PUBLISHERS, cachePublishers, 'migrar publishers com senha/token');
+      console.log('✅ Publishers migrados (senha + token).');
+    }
+  }
 
   return cachePublishers;
 }
@@ -163,7 +188,7 @@ async function obterJogos() {
   const { dados } = await lerJSONdoGitHub(FICH_JOGOS);
   cacheJogos = dados || { jogos: [] };
 
-  // Garantir campo likes em jogos antigos
+  // Garantir campo likes
   cacheJogos.jogos = cacheJogos.jogos.map(j => ({
     ...j,
     likes: typeof j.likes === 'number' ? j.likes : 0,
@@ -209,7 +234,17 @@ function slugUnico(base, existentes) {
   return slug;
 }
 
-/* ---------- Combinar jogo + dados da loja (para feed/pesquisa) ---------- */
+/* ---------- Gerar token único ---------- */
+function gerarToken() {
+  return 'zxzp_' + crypto.randomBytes(24).toString('hex');
+}
+
+/* ---------- Normalizar WhatsApp (só dígitos) ---------- */
+function normalizarWhatsApp(w) {
+  return String(w || '').replace(/\D/g, '');
+}
+
+/* ---------- Combinar jogo + dados da loja ---------- */
 function jogoComLoja(jogo, publishers) {
   const loja = publishers.find(p => p.id === jogo.publisherId);
   return {
@@ -233,11 +268,14 @@ function jogoComLoja(jogo, publishers) {
 async function garantirPublisherFixo() {
   const dados = await obterPublishers();
   if (!dados.publishers || dados.publishers.length === 0) {
+    const senhaHash = await bcrypt.hash(PUBLISHER_FIXO.senha, 10);
     dados.publishers = [{
       id: 1,
-      nome: LOGIN_FIXO.nome,
+      nome: PUBLISHER_FIXO.nome,
       slug: 'zonaxp-membro',
-      whatsapp: '840000000',
+      whatsapp: PUBLISHER_FIXO.whatsapp,
+      senhaHash,
+      token: gerarToken(),
       bio: 'Loja oficial do mercado Publisher ZonaXP.',
       avatar: '',
       capa: '',
@@ -246,88 +284,214 @@ async function garantirPublisherFixo() {
       status: 'ativo',
     }];
     await guardarPublishers('criar publisher fixo');
-    console.log('✅ Publisher fixo criado no GitHub');
-  } else {
-    // Já existia — forçar gravar se faltavam campos novos
-    await guardarPublishers('atualizar estrutura publisher');
+    console.log('✅ Publisher fixo criado com senha e token.');
   }
 }
 
 /* =========================================================
-   MIDDLEWARE
+   MIDDLEWARE — verificar login
    ========================================================= */
-function verificarLogin(req, res, next) {
-  const auth = req.headers['authorization'] || '';
-  const token = auth.replace('Bearer ', '').trim();
+async function verificarLogin(req, res, next) {
+  try {
+    const auth = req.headers['authorization'] || '';
+    const token = auth.replace('Bearer ', '').trim();
 
-  if (token !== TOKEN_FIXO) {
-    return res.status(401).json({ erro: 'Não autorizado. Faz login primeiro.' });
+    if (!token) {
+      return res.status(401).json({ ok: false, erro: 'Token não fornecido.' });
+    }
+
+    const dados = await obterPublishers();
+    const publisher = dados.publishers.find(p => p.token === token);
+
+    if (!publisher) {
+      return res.status(401).json({ ok: false, erro: 'Token inválido ou expirado.' });
+    }
+
+    if (publisher.status !== 'ativo') {
+      return res.status(403).json({ ok: false, erro: 'Conta suspensa.' });
+    }
+
+    req.publisher = publisher;
+    next();
+  } catch (e) {
+    console.error('Erro no middleware:', e.message);
+    res.status(500).json({ ok: false, erro: 'Erro de autenticação.' });
   }
-  next();
 }
 
 /* =========================================================
    AUTH
    ========================================================= */
 
-app.post('/api/login', (req, res) => {
-  const { nome, senha } = req.body || {};
-  if (nome === LOGIN_FIXO.nome && senha === LOGIN_FIXO.senha) {
-    return res.json({
+// POST /api/publisher/registar
+app.post('/api/publisher/registar', async (req, res) => {
+  try {
+    const nome = String(req.body.nome || '').trim();
+    const whatsapp = normalizarWhatsApp(req.body.whatsapp);
+    const senha = String(req.body.senha || '');
+
+    // Validações
+    if (!nome || nome.length < 3) {
+      return res.status(400).json({ ok: false, erro: 'Nome muito curto (mín. 3 letras).' });
+    }
+    if (!whatsapp || whatsapp.length < 9) {
+      return res.status(400).json({ ok: false, erro: 'WhatsApp inválido.' });
+    }
+    if (!senha || senha.length < 6) {
+      return res.status(400).json({ ok: false, erro: 'Senha muito curta (mín. 6 caracteres).' });
+    }
+
+    const dados = await obterPublishers();
+
+    // Verificar se WhatsApp já existe
+    if (dados.publishers.some(p => p.whatsapp === whatsapp)) {
+      return res.status(400).json({ ok: false, erro: 'Este WhatsApp já está registado.' });
+    }
+
+    // Gerar slug único
+    const baseSlug = gerarSlug(nome);
+    const slugsExistentes = dados.publishers.map(p => p.slug);
+    const slug = slugUnico(baseSlug, slugsExistentes);
+
+    // Novo ID
+    const novoId = dados.publishers.length > 0
+      ? Math.max(...dados.publishers.map(p => p.id)) + 1
+      : 1;
+
+    // Encriptar senha + gerar token
+    const senhaHash = await bcrypt.hash(senha, 10);
+    const token = gerarToken();
+
+    const novo = {
+      id: novoId,
+      nome,
+      slug,
+      whatsapp,
+      senhaHash,
+      token,
+      bio: '',
+      avatar: '',
+      capa: '',
+      cores: { ...CORES_ZONAXP },
+      dataRegisto: new Date().toISOString(),
+      status: 'ativo',
+    };
+
+    dados.publishers.push(novo);
+    await guardarPublishers(`novo publisher: ${nome}`);
+
+    // Devolver sem senhaHash
+    const { senhaHash: _, ...novoSemSenha } = novo;
+
+    res.status(201).json({
       ok: true,
-      token: TOKEN_FIXO,
-      publisher: { id: 1, nome: LOGIN_FIXO.nome, slug: 'zonaxp-membro' },
+      token,
+      publisher: novoSemSenha,
     });
+
+  } catch (e) {
+    console.error('Erro /api/publisher/registar:', e.message);
+    res.status(500).json({ ok: false, erro: 'Erro ao registar.' });
   }
-  return res.status(401).json({ ok: false, erro: 'Credenciais inválidas.' });
 });
 
+// POST /api/login
+app.post('/api/login', async (req, res) => {
+  try {
+    const whatsapp = normalizarWhatsApp(req.body.whatsapp);
+    const senha = String(req.body.senha || '');
+
+    if (!whatsapp || !senha) {
+      return res.status(400).json({ ok: false, erro: 'Preenche WhatsApp e senha.' });
+    }
+
+    const dados = await obterPublishers();
+    const publisher = dados.publishers.find(p => p.whatsapp === whatsapp);
+
+    if (!publisher) {
+      return res.status(401).json({ ok: false, erro: 'WhatsApp ou senha errados.' });
+    }
+
+    if (!publisher.senhaHash) {
+      return res.status(401).json({ ok: false, erro: 'Conta sem senha definida. Contacta o suporte.' });
+    }
+
+    const ok = await bcrypt.compare(senha, publisher.senhaHash);
+    if (!ok) {
+      return res.status(401).json({ ok: false, erro: 'WhatsApp ou senha errados.' });
+    }
+
+    if (publisher.status !== 'ativo') {
+      return res.status(403).json({ ok: false, erro: 'Conta suspensa.' });
+    }
+
+    // Regenerar token se não tiver (segurança)
+    if (!publisher.token) {
+      publisher.token = gerarToken();
+      await guardarPublishers('regenerar token');
+    }
+
+    const { senhaHash: _, ...publisherSemSenha } = publisher;
+
+    res.json({
+      ok: true,
+      token: publisher.token,
+      publisher: publisherSemSenha,
+    });
+
+  } catch (e) {
+    console.error('Erro /api/login:', e.message);
+    res.status(500).json({ ok: false, erro: 'Erro ao fazer login.' });
+  }
+});
+
+// POST /api/logout
 app.post('/api/logout', (req, res) => {
   res.json({ ok: true, mensagem: 'Sessão terminada.' });
 });
 
 /* =========================================================
-   PUBLISHER — ver e editar a própria loja
+   PUBLISHER — a própria loja
    ========================================================= */
 
-// GET /api/publisher/loja → dados da minha loja
+// GET /api/publisher/loja
 app.get('/api/publisher/loja', verificarLogin, async (req, res) => {
-  try {
-    const dados = await obterPublishers();
-    const loja = dados.publishers.find(p => p.id === 1);
-    res.json({ ok: true, loja });
-  } catch (e) {
-    res.status(500).json({ ok: false, erro: 'Erro ao ler loja.' });
-  }
+  const { senhaHash: _, ...loja } = req.publisher;
+  res.json({ ok: true, loja });
 });
 
-// PUT /api/publisher/loja → editar nome, bio, avatar, capa, cores, whatsapp
+// PUT /api/publisher/loja
 app.put('/api/publisher/loja', verificarLogin, async (req, res) => {
   try {
     const dados = await obterPublishers();
-    const idx = dados.publishers.findIndex(p => p.id === 1);
+    const idx = dados.publishers.findIndex(p => p.id === req.publisher.id);
     if (idx === -1) return res.status(404).json({ ok: false, erro: 'Loja não encontrada.' });
 
     const loja = dados.publishers[idx];
     const b = req.body || {};
 
-    // Atualizar só os campos permitidos
     if (typeof b.nome === 'string' && b.nome.trim()) {
       const novoNome = b.nome.trim();
       if (novoNome !== loja.nome) {
-        // Regerar slug se o nome mudou
-        const outrosSlugs = dados.publishers.filter(p => p.id !== 1).map(p => p.slug);
+        const outrosSlugs = dados.publishers.filter(p => p.id !== loja.id).map(p => p.slug);
         loja.slug = slugUnico(gerarSlug(novoNome), outrosSlugs);
         loja.nome = novoNome;
       }
     }
 
     if (typeof b.bio === 'string') loja.bio = b.bio.trim();
-    if (typeof b.whatsapp === 'string') loja.whatsapp = b.whatsapp.trim();
+    if (typeof b.whatsapp === 'string') {
+      const novoWpp = normalizarWhatsApp(b.whatsapp);
+      if (novoWpp && novoWpp !== loja.whatsapp) {
+        if (dados.publishers.some(p => p.whatsapp === novoWpp && p.id !== loja.id)) {
+          return res.status(400).json({ ok: false, erro: 'WhatsApp já usado por outra loja.' });
+        }
+        loja.whatsapp = novoWpp;
+      }
+    }
     if (typeof b.avatar === 'string') loja.avatar = b.avatar.trim();
     if (typeof b.capa === 'string') loja.capa = b.capa.trim();
 
-    // Cores — só aceitar campos válidos
     if (b.cores && typeof b.cores === 'object') {
       loja.cores = {
         primaria: b.cores.primaria || loja.cores.primaria || CORES_ZONAXP.primaria,
@@ -341,7 +505,8 @@ app.put('/api/publisher/loja', verificarLogin, async (req, res) => {
     dados.publishers[idx] = loja;
     await guardarPublishers(`editar loja: ${loja.nome}`);
 
-    res.json({ ok: true, loja });
+    const { senhaHash: _, ...lojaSemSenha } = loja;
+    res.json({ ok: true, loja: lojaSemSenha });
   } catch (e) {
     console.error('Erro PUT /api/publisher/loja:', e.message);
     res.status(500).json({ ok: false, erro: 'Erro ao editar loja.' });
@@ -349,23 +514,26 @@ app.put('/api/publisher/loja', verificarLogin, async (req, res) => {
 });
 
 /* =========================================================
-   JOGOS — CRUD privado
+   JOGOS — CRUD privado (por publisher)
    ========================================================= */
 
+// GET /api/jogos — só os MEUS
 app.get('/api/jogos', verificarLogin, async (req, res) => {
   try {
     const dados = await obterJogos();
-    res.json({ ok: true, total: dados.jogos.length, jogos: dados.jogos });
+    const meus = dados.jogos.filter(j => j.publisherId === req.publisher.id);
+    res.json({ ok: true, total: meus.length, jogos: meus });
   } catch (e) {
     res.status(500).json({ ok: false, erro: 'Erro ao ler jogos.' });
   }
 });
 
+// GET /api/jogos/:id — só se for MEU
 app.get('/api/jogos/:id', verificarLogin, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     const dados = await obterJogos();
-    const jogo = dados.jogos.find(j => j.id === id);
+    const jogo = dados.jogos.find(j => j.id === id && j.publisherId === req.publisher.id);
     if (!jogo) return res.status(404).json({ ok: false, erro: 'Jogo não encontrado.' });
     res.json({ ok: true, jogo });
   } catch (e) {
@@ -373,6 +541,7 @@ app.get('/api/jogos/:id', verificarLogin, async (req, res) => {
   }
 });
 
+// POST /api/jogos — cria para MIM
 app.post('/api/jogos', verificarLogin, async (req, res) => {
   const campos = [
     'nome', 'categoria', 'plataforma', 'imagem',
@@ -399,7 +568,7 @@ app.post('/api/jogos', verificarLogin, async (req, res) => {
 
     const novoJogo = {
       id: novoId,
-      publisherId: 1,
+      publisherId: req.publisher.id,   // ← agora vem do token!
       slug,
       nome: req.body.nome.trim(),
       categoria: req.body.categoria.trim(),
@@ -425,11 +594,12 @@ app.post('/api/jogos', verificarLogin, async (req, res) => {
   }
 });
 
+// PUT /api/jogos/:id — só se for MEU
 app.put('/api/jogos/:id', verificarLogin, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     const dados = await obterJogos();
-    const idx = dados.jogos.findIndex(j => j.id === id);
+    const idx = dados.jogos.findIndex(j => j.id === id && j.publisherId === req.publisher.id);
     if (idx === -1) return res.status(404).json({ ok: false, erro: 'Jogo não encontrado.' });
 
     const jogoAtual = dados.jogos[idx];
@@ -464,15 +634,17 @@ app.put('/api/jogos/:id', verificarLogin, async (req, res) => {
   }
 });
 
+// DELETE /api/jogos/:id — só se for MEU
 app.delete('/api/jogos/:id', verificarLogin, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     const dados = await obterJogos();
-    const antes = dados.jogos.length;
-    dados.jogos = dados.jogos.filter(j => j.id !== id);
-    if (dados.jogos.length === antes) {
+    const alvo = dados.jogos.find(j => j.id === id && j.publisherId === req.publisher.id);
+    if (!alvo) {
       return res.status(404).json({ ok: false, erro: 'Jogo não encontrado.' });
     }
+
+    dados.jogos = dados.jogos.filter(j => !(j.id === id && j.publisherId === req.publisher.id));
     await guardarJogos(`apagar jogo id ${id}`);
     res.json({ ok: true, mensagem: 'Jogo apagado.' });
   } catch (e) {
@@ -485,7 +657,6 @@ app.delete('/api/jogos/:id', verificarLogin, async (req, res) => {
    PÚBLICO — FEED + PESQUISA
    ========================================================= */
 
-// GET /api/publico/feed?ordem=recentes|populares&limite=50
 app.get('/api/publico/feed', async (req, res) => {
   try {
     const jogos = await obterJogos();
@@ -503,7 +674,6 @@ app.get('/api/publico/feed', async (req, res) => {
     }
 
     lista = lista.slice(0, limite);
-
     const resultado = lista.map(j => jogoComLoja(j, pubs.publishers));
 
     res.json({ ok: true, ordem, total: resultado.length, jogos: resultado });
@@ -513,7 +683,6 @@ app.get('/api/publico/feed', async (req, res) => {
   }
 });
 
-// GET /api/publico/pesquisa?q=texto
 app.get('/api/publico/pesquisa', async (req, res) => {
   try {
     const q = String(req.query.q || '').trim().toLowerCase();
@@ -522,12 +691,10 @@ app.get('/api/publico/pesquisa', async (req, res) => {
     const jogos = await obterJogos();
     const pubs = await obterPublishers();
 
-    // Pesquisar jogos por nome
     const jogosEncontrados = jogos.jogos.filter(j =>
       j.nome.toLowerCase().includes(q)
     );
 
-    // Pesquisar lojas por nome
     const lojasEncontradas = pubs.publishers.filter(p =>
       p.nome.toLowerCase().includes(q)
     ).map(p => ({
@@ -564,7 +731,6 @@ app.get('/api/publico/jogo/:slug', async (req, res) => {
     const jogo = dados.jogos.find(j => j.slug === req.params.slug);
     if (!jogo) return res.status(404).json({ ok: false, erro: 'Jogo não encontrado.' });
 
-    // Enriquecer com dados da loja
     const loja = pubs.publishers.find(p => p.id === jogo.publisherId);
 
     res.json({
@@ -591,8 +757,6 @@ app.get('/api/publico/loja/:slug', async (req, res) => {
 
     const dados = await obterJogos();
     const jogos = dados.jogos.filter(j => j.publisherId === loja.id);
-
-    // Ordenar: mais recentes primeiro
     jogos.sort((a, b) => new Date(b.dataCriacao) - new Date(a.dataCriacao));
 
     res.json({
@@ -615,7 +779,6 @@ app.get('/api/publico/loja/:slug', async (req, res) => {
   }
 });
 
-// POST /api/publico/jogo/:slug/like
 app.post('/api/publico/jogo/:slug/like', async (req, res) => {
   try {
     const dados = await obterJogos();
@@ -639,8 +802,9 @@ app.get('/', (req, res) => {
   res.json({
     ok: true,
     sistema: 'Publisher ZonaXP — API',
-    versao: '2.0.0',
+    versao: '3.0.0',
     endpoints: {
+      registar: 'POST /api/publisher/registar',
       login: 'POST /api/login',
       minhaLoja: 'GET /api/publisher/loja',
       editarLoja: 'PUT /api/publisher/loja',
@@ -678,8 +842,8 @@ app.use((req, res) => {
 
     app.listen(PORT, () => {
       console.log('=========================================');
-      console.log(`🚀 Publisher API v2.0 — porta ${PORT}`);
-      console.log(`🔑 Login: ${LOGIN_FIXO.nome} / ${LOGIN_FIXO.senha}`);
+      console.log(`🚀 Publisher API v3.0 — porta ${PORT}`);
+      console.log(`👥 Multi-publisher com tokens`);
       console.log(`📦 Repo GitHub: ${GITHUB_REPO} (${GITHUB_BRANCH})`);
       console.log(`🌐 API em: http://localhost:${PORT}`);
       console.log('=========================================');

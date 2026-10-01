@@ -94,12 +94,13 @@
     .hero-placeholder {
       width: 100%;
       aspect-ratio: 1/1;
-      background: #0a0a1a;
+      background: linear-gradient(135deg, var(--primaria) 0%, var(--secundaria) 100%);
+      opacity: 0.15;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 64px;
-      color: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.4);
     }
 
     /* CONTEÚDO */
@@ -107,18 +108,30 @@
       padding: 22px 20px;
     }
 
-    .tag-plataforma {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--primaria), var(--secundaria));
-      color: #fff;
-      font-size: 11px;
+    /* TAGS */
+    .tags-linha {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .tag {
+      font-size: 10.5px;
       font-weight: 700;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
       text-transform: uppercase;
       padding: 4px 10px;
       border-radius: 6px;
-      margin-bottom: 12px;
+    }
+    .tag-plataforma {
+      background: linear-gradient(135deg, var(--primaria), var(--secundaria));
+      color: #fff;
       box-shadow: 0 0 12px rgba(255,0,170,0.3);
+    }
+    .tag-categoria {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.1);
     }
 
     h1 {
@@ -174,6 +187,42 @@
       font-weight: 700;
     }
 
+    /* PREÇO / GRÁTIS */
+    .preco-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      margin-bottom: 18px;
+      font-weight: 800;
+    }
+    .preco-box.gratis {
+      background: rgba(0,200,80,0.1);
+      border: 1.5px solid rgba(0,200,80,0.3);
+      color: #66ff99;
+    }
+    .preco-box.pago {
+      background: linear-gradient(135deg, rgba(255,0,170,0.15), rgba(0,170,255,0.15));
+      border: 1.5px solid rgba(255,0,170,0.3);
+      color: var(--texto);
+    }
+    .preco-emoji { font-size: 22px; }
+    .preco-valor {
+      font-size: 22px;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, var(--primaria), var(--secundaria));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .preco-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
     /* DESCRIÇÃO CURTA */
     .desc-curta {
       font-size: 14.5px;
@@ -191,6 +240,9 @@
       grid-template-columns: 1fr 1fr;
       gap: 10px;
       margin-bottom: 20px;
+    }
+    .info-grid.single {
+      grid-template-columns: 1fr;
     }
     .info-item {
       background: rgba(255,255,255,0.03);
@@ -241,23 +293,24 @@
     /* AÇÕES */
     .acoes {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       align-items: stretch;
+      flex-wrap: wrap;
     }
     .btn-like {
       background: rgba(255,0,170,0.1);
       border: 1.5px solid rgba(255,0,170,0.3);
       color: var(--primaria);
-      padding: 16px 20px;
+      padding: 14px 16px;
       border-radius: 12px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       cursor: pointer;
       font-family: inherit;
       transition: all 0.2s;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       white-space: nowrap;
       flex-shrink: 0;
     }
@@ -265,9 +318,7 @@
       background: rgba(255,0,170,0.2);
       transform: translateY(-1px);
     }
-    .btn-like:active {
-      transform: scale(0.96);
-    }
+    .btn-like:active { transform: scale(0.96); }
     .btn-like.liked {
       background: var(--primaria);
       color: #fff;
@@ -275,7 +326,7 @@
       box-shadow: 0 0 20px rgba(255,0,170,0.4);
     }
     .btn-like .coracao {
-      font-size: 17px;
+      font-size: 15px;
       transition: transform 0.2s;
     }
     .btn-like.liked .coracao {
@@ -286,31 +337,66 @@
       50% { transform: scale(1.4); }
     }
 
-    .btn-download {
+    .btn-partilhar {
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      color: var(--texto);
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-partilhar:hover {
+      border-color: var(--secundaria);
+      background: rgba(0,170,255,0.1);
+    }
+    .btn-partilhar .icone { font-size: 15px; }
+
+    .btn-acao-principal {
       flex: 1;
+      min-width: 180px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 16px;
-      background: linear-gradient(135deg, var(--primaria), var(--secundaria));
+      padding: 14px 18px;
       color: #fff;
       text-decoration: none;
       border-radius: 12px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       transition: all 0.2s;
       text-align: center;
       letter-spacing: -0.2px;
+      font-family: inherit;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-acao-principal.download {
+      background: linear-gradient(135deg, var(--primaria), var(--secundaria));
       box-shadow: 0 4px 16px rgba(255,0,170,0.3);
     }
-    .btn-download:hover {
+    .btn-acao-principal.download:hover {
       filter: brightness(1.15);
       transform: translateY(-1px);
       box-shadow: 0 6px 22px rgba(255,0,170,0.4);
     }
-    .btn-download:active {
-      transform: translateY(0);
+    .btn-acao-principal.comprar {
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      box-shadow: 0 4px 16px rgba(37,211,102,0.3);
+    }
+    .btn-acao-principal.comprar:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(37,211,102,0.4);
     }
 
     /* ERRO */
@@ -391,6 +477,7 @@
       z-index: 200;
       max-width: 90%;
       border: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
     }
     .toast.ativo { transform: translateX(-50%) translateY(0); }
   </style>
@@ -405,7 +492,7 @@
   <div class="container" id="app">
     <div class="loading">
       <div class="spinner"></div>
-      A carregar jogo...
+      A carregar...
     </div>
   </div>
 
@@ -417,7 +504,6 @@
     // ============================================
     const API_URL = 'https://publisher-zonaxp.onrender.com';
 
-    // Ler slug da URL (?slug=xxx)
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('slug');
 
@@ -444,7 +530,7 @@
       const t = document.getElementById('toast');
       t.textContent = msg;
       t.className = 'toast ativo';
-      setTimeout(() => t.classList.remove('ativo'), 2500);
+      setTimeout(() => t.classList.remove('ativo'), 2200);
     }
 
     function voltar() {
@@ -456,7 +542,7 @@
     }
 
     function mostrarErro(titulo, msg) {
-      document.title = 'Jogo não encontrado — Publisher ZonaXP';
+      document.title = 'Item não encontrado — Publisher ZonaXP';
       app.innerHTML = `
         <div class="erro-pagina">
           <div class="emoji">🔍</div>
@@ -467,9 +553,16 @@
       `;
     }
 
+    /* ---------- Formatar preço ---------- */
+    function formatarPreco(preco) {
+      const n = Number(preco) || 0;
+      return n.toLocaleString('pt-MZ') + ' MT';
+    }
+
+    /* ---------- Carregar ---------- */
     async function carregar() {
       if (!slug) {
-        mostrarErro('Link inválido', 'O URL não tem um jogo.');
+        mostrarErro('Link inválido', 'O URL não tem um item.');
         return;
       }
 
@@ -478,14 +571,13 @@
         const data = await resp.json();
 
         if (!resp.ok || !data.ok) {
-          mostrarErro('Jogo não encontrado', 'Este jogo não existe ou foi removido.');
+          mostrarErro('Item não encontrado', 'Este item não existe ou foi removido.');
           return;
         }
 
         jogoAtual = data.jogo;
         renderizar(jogoAtual);
 
-        // Verificar se já deu like
         const likesDados = JSON.parse(localStorage.getItem('likes_dados') || '{}');
         if (likesDados[slug]) {
           jaDeuLike = true;
@@ -497,6 +589,7 @@
       }
     }
 
+    /* ---------- Renderizar ---------- */
     function renderizar(j) {
       document.title = j.nome + ' — Publisher ZonaXP';
 
@@ -510,12 +603,104 @@
         ? `<div class="loja-avatar-peq" style="background-image:url('${escapar(j.avatarLoja)}')"></div>`
         : `<div class="loja-avatar-peq">${escapar(j.nomeLoja).charAt(0).toUpperCase()}</div>`;
 
+      // Tags (plataforma opcional)
+      const tagsHtml = `
+        <div class="tags-linha">
+          ${j.plataforma ? `<span class="tag tag-plataforma">${escapar(j.plataforma)}</span>` : ''}
+          <span class="tag tag-categoria">${escapar(j.categoria)}</span>
+        </div>
+      `;
+
+      // Preço
+      const isPago = j.tipo === 'pago';
+      const precoHtml = isPago
+        ? `
+          <div class="preco-box pago">
+            <span class="preco-emoji">💰</span>
+            <span class="preco-valor">${formatarPreco(j.preco)}</span>
+          </div>
+        `
+        : `
+          <div class="preco-box gratis">
+            <span class="preco-emoji">✅</span>
+            <span class="preco-label">Grátis</span>
+          </div>
+        `;
+
+      // Descrição curta (opcional)
+      const descCurtaHtml = j.descricao_curta
+        ? `<div class="desc-curta">${escapar(j.descricao_curta)}</div>`
+        : '';
+
+      // Info cards (tamanho/senha opcionais)
+      const temTamanho = !!j.tamanho;
+      const temSenha = !!j.senha;
+      let infoHtml = '';
+      if (temTamanho || temSenha) {
+        infoHtml = `
+          <div class="info-grid ${(temTamanho && temSenha) ? '' : 'single'}">
+            ${temTamanho ? `
+              <div class="info-item">
+                <div class="info-label">Tamanho</div>
+                <div class="info-valor">${escapar(j.tamanho)}</div>
+              </div>
+            ` : ''}
+            ${temSenha ? `
+              <div class="info-item">
+                <div class="info-label">Senha</div>
+                <div class="info-valor">${escapar(j.senha)}</div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+
+      // Descrição longa (opcional)
+      const descLongaHtml = j.descricao_longa
+        ? `
+          <div class="desc-longa">
+            <h3>Sobre</h3>
+            <div class="desc-longa-conteudo">${escapar(j.descricao_longa)}</div>
+          </div>
+        `
+        : '';
+
+      // Botão principal (download ou whatsapp)
+      let botaoPrincipalHtml = '';
+      if (isPago) {
+        const whatsappLoja = j.whatsappLoja || '';
+        const mensagem = encodeURIComponent(`Quero comprar ${j.nome}`);
+        if (whatsappLoja) {
+          botaoPrincipalHtml = `
+            <a class="btn-acao-principal comprar"
+               href="https://wa.me/${escapar(whatsappLoja)}?text=${mensagem}"
+               target="_blank" rel="noopener">
+              💬 Comprar no WhatsApp
+            </a>
+          `;
+        } else {
+          botaoPrincipalHtml = `
+            <div class="btn-acao-principal comprar" style="opacity:0.5;cursor:not-allowed">
+              💬 Vendedor sem WhatsApp
+            </div>
+          `;
+        }
+      } else {
+        botaoPrincipalHtml = `
+          <a class="btn-acao-principal download"
+             href="${escapar(j.download)}"
+             target="_blank" rel="noopener">
+            ⬇️ Descarregar
+          </a>
+        `;
+      }
+
       app.innerHTML = `
         <div class="card">
           ${heroHtml}
           <div class="conteudo">
 
-            <div class="tag-plataforma">${escapar(j.plataforma)} · ${escapar(j.categoria)}</div>
+            ${tagsHtml}
             <h1>${escapar(j.nome)}</h1>
 
             <a class="link-loja" href="/loja.html?slug=${escapar(j.slugLoja)}">
@@ -524,34 +709,22 @@
               <span style="font-size:14px">→</span>
             </a>
 
-            <div class="desc-curta">${escapar(j.descricao_curta)}</div>
+            ${precoHtml}
 
-            <div class="info-grid">
-              <div class="info-item">
-                <div class="info-label">Tamanho</div>
-                <div class="info-valor">${escapar(j.tamanho)}</div>
-              </div>
-              <div class="info-item">
-                <div class="info-label">Senha</div>
-                <div class="info-valor">${escapar(j.senha)}</div>
-              </div>
-            </div>
-
-            ${j.descricao_longa ? `
-              <div class="desc-longa">
-                <h3>Sobre o jogo</h3>
-                <div class="desc-longa-conteudo">${escapar(j.descricao_longa)}</div>
-              </div>
-            ` : ''}
+            ${descCurtaHtml}
+            ${infoHtml}
+            ${descLongaHtml}
 
             <div class="acoes">
               <button class="btn-like" id="btnLike" onclick="darLike()">
                 <span class="coracao">❤️</span>
                 <span id="likesContador">${j.likes || 0}</span>
               </button>
-              <a class="btn-download" href="${escapar(j.download)}" target="_blank" rel="noopener">
-                ⬇️ Descarregar
-              </a>
+              <button class="btn-partilhar" onclick="partilhar()">
+                <span class="icone">🔗</span>
+                Partilhar
+              </button>
+              ${botaoPrincipalHtml}
             </div>
 
           </div>
@@ -563,9 +736,49 @@
       `;
     }
 
+    /* ---------- Partilhar ---------- */
+    async function partilhar() {
+      const urlAtual = window.location.href;
+      const nome = jogoAtual?.nome || 'Item';
+
+      // Se o browser suportar Web Share API (mobile)
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: nome + ' — Publisher ZonaXP',
+            text: 'Vê este item no Publisher ZonaXP!',
+            url: urlAtual,
+          });
+          return;
+        } catch (e) {
+          // Utilizador cancelou ou erro → tenta copiar
+        }
+      }
+
+      // Fallback: copiar para clipboard
+      try {
+        await navigator.clipboard.writeText(urlAtual);
+        toast('Link copiado! 📋');
+      } catch (e) {
+        // Fallback antigo (execCommand)
+        try {
+          const input = document.createElement('input');
+          input.value = urlAtual;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand('copy');
+          document.body.removeChild(input);
+          toast('Link copiado! 📋');
+        } catch (err) {
+          toast('Não foi possível copiar.');
+        }
+      }
+    }
+
+    /* ---------- Like ---------- */
     async function darLike() {
       if (jaDeuLike) {
-        toast('Já deste like neste jogo.');
+        toast('Já deste like neste item.');
         return;
       }
 

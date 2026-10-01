@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ajuda — Publisher ZonaXP</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primaria: #ff00aa;
+      --secundaria: #00aaff;
+      --fundo: #0a0a1a;
+      --cards: #15152a;
+      --texto: #ffffff;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--fundo);
+      min-height: 100vh;
+      color: var(--texto);
+      padding-bottom: 40px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -100px; left: -100px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(255,0,170,0.1), transparent 70%);
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -100px; right: -100px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(0,170,255,0.1), transparent 70%);
+      pointer-events: none;
+    }
+
+    /* TOPO */
+    .topo {
+      background: rgba(10,10,26,0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .btn-voltar {
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      color: var(--texto);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+    .btn-voltar:hover {
+      border-color: var(--primaria);
+      background: rgba(255,0,170,0.1);
+    }
+    .topo-brand {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--texto);
+      letter-spacing: -0.2px;
+      text-decoration: none;
+    }
+    .topo-brand span {
+      color: rgba(255,255,255,0.5);
+      font-weight: 500;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 24px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .hero-emoji {
+      font-size: 56px;
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      background: linear-gradient(90deg, var(--primaria), var(--secundaria));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    .hero p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.5;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* AVISO */
+    .aviso {
+      background: rgba(0,170,255,0.08);
+      border: 1px solid rgba(0,170,255,0.2);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 22px;
+      line-height: 1.55;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .aviso .icone {
+      font-size: 16px;
+      flex-shrink: 0;
+      line-height: 1.2;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--cards);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 24px 22px;
+    }
+
+    /* CAMPOS */
+    .campo {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 6px;
+    }
+    label .obrig { color: var(--primaria); margin-left: 2px; }
+
+    input, textarea {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      font-size: 15px;
+      background: rgba(0,0,0,0.25);
+      color: var(--texto);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primaria);
+      background: rgba(0,0,0,0.4);
+      box-shadow: 0 0 0 3px rgba(255,0,170,0.15);
+    }
+    input::placeholder, textarea::placeholder {
+      color: rgba(255,255,255,0.3);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 140px;
+      line-height: 1.55;
+    }
+
+    .contador {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.4);
+      text-align: right;
+      margin-top: 5px;
+      padding-right: 2px;
+    }
+    .contador.perto {
+      color: #ffaa00;
+    }
+    .contador.limite {
+      color: #ff5555;
+    }
+
+    /* BOTÃO */
+    button.btn-principal {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, var(--primaria), var(--secundaria));
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      margin-top: 8px;
+      box-shadow: 0 4px 20px rgba(255,0,170,0.3);
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    button.btn-principal:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 26px rgba(255,0,170,0.4);
+    }
+    button.btn-principal:active {
+      transform: translateY(0);
+    }
+    button.btn-principal:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      filter: none;
+    }
+
+    /* ERRO / SUCESSO */
+    .erro {
+      background: rgba(255,0,0,0.15);
+      border: 1px solid rgba(255,80,80,0.4);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #ff8888;
+      margin-bottom: 16px;
+      display: none;
+      line-height: 1.5;
+    }
+    .erro.ativo { display: block; }
+
+    .sucesso {
+      background: rgba(0,200,80,0.12);
+      border: 1px solid rgba(0,200,80,0.3);
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 14px;
+      color: #66ff99;
+      margin-bottom: 16px;
+      display: none;
+      line-height: 1.55;
+      text-align: center;
+    }
+    .sucesso.ativo { display: block; }
+    .sucesso .icone-grande {
+      font-size: 40px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    /* RODAPÉ */
+    .rodape {
+      text-align: center;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.3);
+      margin-top: 30px;
+      line-height: 1.7;
+    }
+    .rodape a {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.15s;
+    }
+    .rodape a:hover {
+      color: var(--secundaria);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topo">
+    <a class="btn-voltar" href="/index.html">←</a>
+    <a class="topo-brand" href="/index.html">Publisher <span>ZonaXP</span></a>
+  </div>
+
+  <div class="container">
+
+    <div class="hero">
+      <div class="hero-emoji">💬</div>
+      <h1>Fale connosco</h1>
+      <p>Envia-nos uma mensagem. Vamos responder o mais rápido possível.</p>
+    </div>
+
+    <div class="aviso">
+      <span class="icone">💡</span>
+      <div>Precisas reportar um problema, sugerir algo ou tirar dúvidas? Escreve abaixo e preenche o teu nome e WhatsApp para te podermos responder.</div>
+    </div>
+
+    <div class="card">
+      <div class="erro" id="erro"></div>
+      <div class="sucesso" id="sucesso"></div>
+
+      <form id="formMensagem">
+
+        <div class="campo">
+          <label for="nome">O teu nome <span class="obrig">*</span></label>
+          <input type="text" id="nome" placeholder="Ex: João Silva" autocomplete="name" required>
+        </div>
+
+        <div class="campo">
+          <label for="whatsapp">WhatsApp <span class="obrig">*</span></label>
+          <input type="tel" id="whatsapp" placeholder="Ex: 841234567" autocomplete="tel" inputmode="numeric" required>
+        </div>
+
+        <div class="campo">
+          <label for="mensagem">Mensagem <span class="obrig">*</span></label>
+          <textarea id="mensagem" placeholder="Escreve a tua mensagem..." maxlength="1000" required></textarea>
+          <div class="contador" id="contador">0/1000</div>
+        </div>
+
+        <button type="submit" class="btn-principal" id="btnEnviar">
+          📨 Enviar mensagem
+        </button>
+      </form>
+    </div>
+
+    <div class="rodape">
+      <a href="/index.html">← Voltar ao mercado</a>
+    </div>
+
+  </div>
+
+  <script>
+    // ============================================
+    // CONFIGURAÇÃO
+    // ============================================
+    const API_URL = 'https://publisher-zonaxp.onrender.com';
+
+    const form = document.getElementById('formMensagem');
+    const nomeInput = document.getElementById('nome');
+    const whatsappInput = document.getElementById('whatsapp');
+    const mensagemInput = document.getElementById('mensagem');
+    const btnEnviar = document.getElementById('btnEnviar');
+    const erroBox = document.getElementById('erro');
+    const sucessoBox = document.getElementById('sucesso');
+    const contador = document.getElementById('contador');
+
+    /* ---------- Normalizar WhatsApp ---------- */
+    whatsappInput.addEventListener('input', e => {
+      e.target.value = e.target.value.replace(/\D/g, '');
+    });
+
+    /* ---------- Contador de caracteres ---------- */
+    mensagemInput.addEventListener('input', () => {
+      const n = mensagemInput.value.length;
+      contador.textContent = n + '/1000';
+      contador.classList.toggle('perto', n >= 800 && n < 950);
+      contador.classList.toggle('limite', n >= 950);
+    });
+
+    /* ---------- Erro/sucesso ---------- */
+    function mostrarErro(msg) {
+      erroBox.textContent = msg;
+      erroBox.classList.add('ativo');
+      sucessoBox.classList.remove('ativo');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function esconder() {
+      erroBox.classList.remove('ativo');
+      sucessoBox.classList.remove('ativo');
+    }
+
+    /* ---------- Submeter ---------- */
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      esconder();
+
+      const nome = nomeInput.value.trim();
+      const whatsapp = whatsappInput.value.trim();
+      const mensagem = mensagemInput.value.trim();
+
+      if (!nome || nome.length < 2) {
+        mostrarErro('Escreve o teu nome.');
+        return;
+      }
+      if (!whatsapp || whatsapp.length < 9) {
+        mostrarErro('WhatsApp inválido. Mínimo 9 dígitos.');
+        return;
+      }
+      if (!mensagem || mensagem.length < 5) {
+        mostrarErro('Escreve uma mensagem (mínimo 5 caracteres).');
+        return;
+      }
+      if (mensagem.length > 1000) {
+        mostrarErro('Mensagem muito longa (máx 1000 caracteres).');
+        return;
+      }
+
+      btnEnviar.disabled = true;
+      btnEnviar.textContent = 'A enviar...';
+
+      try {
+        const resp = await fetch(API_URL + '/api/publico/mensagem', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome, whatsapp, mensagem }),
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mostrarErro(data.erro || 'Erro ao enviar. Tenta novamente.');
+          btnEnviar.disabled = false;
+          btnEnviar.textContent = '📨 Enviar mensagem';
+          return;
+        }
+
+        // Sucesso
+        sucessoBox.innerHTML = `
+          <span class="icone-grande">✅</span>
+          <strong>Mensagem enviada!</strong><br>
+          Vamos responder o mais rápido possível no WhatsApp.
+        `;
+        sucessoBox.classList.add('ativo');
+
+        // Limpar form
+        form.reset();
+        contador.textContent = '0/1000';
+        btnEnviar.textContent = 'Enviado ✓';
+
+        setTimeout(() => {
+          btnEnviar.disabled = false;
+          btnEnviar.textContent = '📨 Enviar outra mensagem';
+        }, 3000);
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      } catch (err) {
+        mostrarErro('Erro de ligação. Verifica a tua internet.');
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = '📨 Enviar mensagem';
+      }
+    });
+  </script>
+</body>
+</html>

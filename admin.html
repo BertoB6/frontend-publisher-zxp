@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Publisher ZonaXP</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primaria: #ff00aa;
+      --secundaria: #00aaff;
+      --fundo: #0a0a1a;
+      --cards: #15152a;
+      --texto: #ffffff;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--fundo);
+      min-height: 100vh;
+      color: var(--texto);
+      padding-bottom: 40px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -100px; left: -100px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(255,0,170,0.12), transparent 70%);
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -100px; right: -100px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(0,170,255,0.12), transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ==========================================================
+       LOGIN SCREEN
+       ========================================================== */
+    .login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .login-card {
+      background: var(--cards);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 36px 28px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .login-logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .login-logo-emoji {
+      font-size: 48px;
+      margin-bottom: 8px;
+    }
+    .login-logo h1 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      background: linear-gradient(90deg, var(--primaria), var(--secundaria));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .login-logo p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 6px;
+    }
+
+    .login-card label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 6px;
+    }
+    .login-card .campo {
+      margin-bottom: 16px;
+    }
+    .input-wrap {
+      position: relative;
+    }
+    .login-card input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      font-size: 15px;
+      background: rgba(0,0,0,0.25);
+      color: var(--texto);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .login-card input:focus {
+      outline: none;
+      border-color: var(--primaria);
+      background: rgba(0,0,0,0.4);
+      box-shadow: 0 0 0 3px rgba(255,0,170,0.15);
+    }
+    .login-card input::placeholder {
+      color: rgba(255,255,255,0.3);
+    }
+    .input-senha { padding-right: 46px !important; }
+    .btn-olho {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.5);
+      font-size: 16px;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+    }
+    .btn-olho:hover { color: var(--secundaria); }
+
+    .btn-login {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, var(--primaria), var(--secundaria));
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      margin-top: 8px;
+      box-shadow: 0 4px 20px rgba(255,0,170,0.3);
+    }
+    .btn-login:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+    }
+    .btn-login:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      filter: none;
+    }
+
+    .login-erro {
+      background: rgba(255,0,0,0.15);
+      border: 1px solid rgba(255,80,80,0.4);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #ff8888;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .login-erro.ativo { display: block; }
+
+    .login-rodape {
+      text-align: center;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.3);
+      margin-top: 20px;
+    }
+    .login-rodape a {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .login-rodape a:hover { color: var(--secundaria); }
+
+    /* ==========================================================
+       PAINEL (escondido por defeito)
+       ========================================================== */
+    .painel { display: none; }
+    .painel.ativo { display: block; }
+
+    /* HEADER */
+    header {
+      background: rgba(10,10,26,0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 14px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-logo { font-size: 22px; flex-shrink: 0; }
+    .header-info { flex: 1; min-width: 0; }
+    .header-info h1 {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      background: linear-gradient(90deg, var(--primaria), var(--secundaria));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-info p {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 1px;
+    }
+    .btn-sair {
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      color: var(--texto);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+      flex-shrink: 0;
+    }
+    .btn-sair:hover {
+      border-color: rgba(255,80,80,0.5);
+      color: #ff8888;
+      background: rgba(255,0,0,0.1);
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 20px;
+      padding: 4px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.06);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      flex: 1;
+      min-width: 100px;
+      padding: 10px 12px;
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.55);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 9px;
+      font-family: inherit;
+      transition: all 0.2s;
+      white-space: nowrap;
+      position: relative;
+    }
+    .tab.ativa {
+      background: linear-gradient(135deg, var(--primaria), var(--secundaria));
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(255,0,170,0.3);
+    }
+    .tab .badge {
+      display: inline-block;
+      background: #d00;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    /* STATS */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    @media (min-width: 600px) {
+      .stats { grid-template-columns: repeat(4, 1fr); }
+    }
+    .stat {
+      background: var(--cards);
+      border-radius: 14px;
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .stat-emoji { font-size: 22px; margin-bottom: 6px; }
+    .stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .stat-valor {
+      font-size: 26px;
+      font-weight: 800;
+      margin-top: 4px;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, var(--primaria), var(--secundaria));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* SECÇÕES */
+    .secao { display: none; }
+    .secao.ativa { display: block; }
+
+    /* ITEM */
+    .item {
+      background: var(--cards);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 14px;
+      margin-bottom: 10px;
+      transition: all 0.15s;
+    }
+    .item:hover { border-color: rgba(255,0,170,0.2); }
+    .item.lida { opacity: 0.5; }
+
+    .item-header {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .item-img {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: #0a0a1a center/cover no-repeat;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: rgba(255,255,255,0.3);
+    }
+    .item-img.circular { border-radius: 50%; }
+    .item-info { flex: 1; min-width: 0; }
+    .item-nome {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 3px;
+      word-break: break-word;
+    }
+    .item-meta {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.5);
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .badge-mini {
+      background: rgba(255,0,170,0.15);
+      color: var(--primaria);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-mini.gratis { background: rgba(0,200,80,0.15); color: #66ff99; }
+    .badge-mini.admin { background: rgba(255,215,0,0.15); color: #ffd700; }
+    .badge-mini.publisher { background: rgba(0,170,255,0.15); color: var(--secundaria); }
+
+    .item-acoes {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .btn-acao {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+      color: var(--texto);
+      cursor: pointer;
+      font-size: 11.5px;
+      font-weight: 700;
+      transition: all 0.15s;
+      font-family: inherit;
+      white-space: nowrap;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-acao:hover {
+      border-color: var(--primaria);
+      background: rgba(255,0,170,0.1);
+    }
+    .btn-acao.perigo:hover {
+      border-color: rgba(255,80,80,0.5);
+      background: rgba(255,0,0,0.1);
+      color: #ff8888;
+    }
+    .btn-acao.verde:hover {
+      border-color: rgba(0,200,80,0.5);
+      background: rgba(0,200,80,0.1);
+      color: #66ff99;
+    }
+
+    /* MENSAGEM */
+    .mensagem-corpo {
+      background: rgba(0,0,0,0.25);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.85);
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-top: 8px;
+      border-left: 3px solid var(--primaria);
+    }
+
+    /* VAZIO / LOADING */
+    .vazio {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(255,255,255,0.4);
+      background: var(--cards);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .vazio-emoji { font-size: 48px; margin-bottom: 12px; opacity: 0.6; }
+    .vazio-txt { font-size: 13.5px; }
+
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(255,255,255,0.4);
+    }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(255,255,255,0.08);
+      border-top-color: var(--primaria);
+      border-radius: 50%;
+      animation: girar 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes girar { to { transform: rotate(360deg); } }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--cards);
+      color: var(--texto);
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: transform 0.3s;
+      z-index: 200;
+      max-width: 90%;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .toast.ativo { transform: translateX(-50%) translateY(0); }
+    .toast.erro { background: #d00; border-color: #d00; }
+    .toast.sucesso { background: #0a6; border-color: #0a6; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+    .modal-overlay.ativo { display: flex; }
+    .modal {
+      background: var(--cards);
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 380px;
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .modal h3 { font-size: 17px; margin-bottom: 8px; }
+    .modal p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .modal-botoes { display: flex; gap: 10px; }
+    .modal-botoes button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      border: none;
+      transition: all 0.15s;
+    }
+    .btn-cancelar { background: rgba(255,255,255,0.08); color: var(--texto); }
+    .btn-cancelar:hover { background: rgba(255,255,255,0.15); }
+    .btn-confirmar { background: #d00; color: #fff; }
+    .btn-confirmar:hover { background: #b00; }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       ECRÃ DE LOGIN
+       ============================================================ -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="login-logo-emoji">👑</div>
+        <h1>Painel de Admin</h1>
+        <p>Publisher ZonaXP</p>
+      </div>
+
+      <div class="login-erro" id="loginErro"></div>
+
+      <form id="formLoginAdmin">
+        <div class="campo">
+          <label for="utilizador">Utilizador</label>
+          <input type="text" id="utilizador" placeholder="admin" autocomplete="username" required>
+        </div>
+
+        <div class="campo">
+          <label for="senha">Senha</label>
+          <div class="input-wrap">
+            <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password" class="input-senha" required>
+            <button type="button" class="btn-olho" onclick="toggleSenha('senha', this)">👁️</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login" id="btnLogin">Entrar</button>
+      </form>
+
+      <div class="login-rodape">
+        <a href="/index.html">← Voltar ao mercado</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PAINEL
+       ============================================================ -->
+  <div class="painel" id="painel">
+
+    <header>
+      <div class="header-inner">
+        <div class="header-logo">👑</div>
+        <div class="header-info">
+          <h1>Admin — Publisher ZonaXP</h1>
+          <p id="nomeAdmin">Sessão ativa</p>
+        </div>
+        <button class="btn-sair" onclick="sair()">Sair</button>
+      </div>
+    </header>
+
+    <div class="container">
+
+      <div class="stats" id="stats">
+        <div class="stat">
+          <div class="stat-emoji">👥</div>
+          <div class="stat-label">Publishers</div>
+          <div class="stat-valor" id="statPublishers">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-emoji">📦</div>
+          <div class="stat-label">Produtos</div>
+          <div class="stat-valor" id="statProdutos">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-emoji">❤️</div>
+          <div class="stat-label">Likes</div>
+          <div class="stat-valor" id="statLikes">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-emoji">📩</div>
+          <div class="stat-label">Mensagens</div>
+          <div class="stat-valor" id="statMensagens">—</div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab ativa" data-tab="mensagens">
+          📩 Mensagens <span class="badge" id="badgeMsgs" style="display:none">0</span>
+        </button>
+        <button class="tab" data-tab="publishers">👥 Publishers</button>
+        <button class="tab" data-tab="produtos">📦 Produtos</button>
+      </div>
+
+      <div class="secao ativa" id="secao-mensagens">
+        <div id="listaMensagens"></div>
+      </div>
+
+      <div class="secao" id="secao-publishers">
+        <div id="listaPublishers"></div>
+      </div>
+
+      <div class="secao" id="secao-produtos">
+        <div id="listaProdutos"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h3 id="modalTitulo">Confirmar?</h3>
+      <p id="modalTexto">Tens a certeza?</p>
+      <div class="modal-botoes">
+        <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+        <button class="btn-confirmar" id="modalConfirmar">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ============================================
+    // CONFIGURAÇÃO
+    // ============================================
+    const API_URL = 'https://publisher-zonaxp.onrender.com';
+
+    let TOKEN = localStorage.getItem('admin_token') || '';
+    let acaoModal = null;
+
+    /* ---------- Escapar ---------- */
+    function escapar(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    /* ---------- Formatar data ---------- */
+    function formatarData(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      const agora = new Date();
+      const diff = (agora - d) / 1000;
+
+      if (diff < 60) return 'agora';
+      if (diff < 3600) return `há ${Math.floor(diff/60)}min`;
+      if (diff < 86400) return `há ${Math.floor(diff/3600)}h`;
+      if (diff < 604800) return `há ${Math.floor(diff/86400)}d`;
+
+      return d.toLocaleDateString('pt-MZ');
+    }
+
+    /* ---------- Toast ---------- */
+    function toast(msg, tipo = '') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast ativo' + (tipo ? ' ' + tipo : '');
+      setTimeout(() => t.classList.remove('ativo'), 2500);
+    }
+
+    /* ---------- Mostrar/ocultar senha ---------- */
+    function toggleSenha(id, btn) {
+      const input = document.getElementById(id);
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        btn.textContent = '👁️';
+      }
+    }
+
+    /* =========================================================
+       LOGIN
+       ========================================================= */
+    const formLogin = document.getElementById('formLoginAdmin');
+    const erroLogin = document.getElementById('loginErro');
+    const btnLogin = document.getElementById('btnLogin');
+
+    // Se já tem token → mostra painel direto
+    if (TOKEN) {
+      mostrarPainel();
+    }
+
+    formLogin.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      erroLogin.classList.remove('ativo');
+
+      const utilizador = document.getElementById('utilizador').value.trim();
+      const senha = document.getElementById('senha').value;
+
+      if (!utilizador || !senha) {
+        erroLogin.textContent = 'Preenche os dois campos.';
+        erroLogin.classList.add('ativo');
+        return;
+      }
+
+      btnLogin.disabled = true;
+      btnLogin.textContent = 'A entrar...';
+
+      try {
+        const resp = await fetch(API_URL + '/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ utilizador, senha }),
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          erroLogin.textContent = data.erro || 'Utilizador ou senha errados.';
+          erroLogin.classList.add('ativo');
+          btnLogin.disabled = false;
+          btnLogin.textContent = 'Entrar';
+          return;
+        }
+
+        TOKEN = data.token;
+        localStorage.setItem('admin_token', TOKEN);
+
+        mostrarPainel();
+
+      } catch (err) {
+        erroLogin.textContent = 'Erro de ligação ao servidor.';
+        erroLogin.classList.add('ativo');
+        btnLogin.disabled = false;
+        btnLogin.textContent = 'Entrar';
+      }
+    });
+
+    /* =========================================================
+       MOSTRAR PAINEL
+       ========================================================= */
+    function mostrarPainel() {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('painel').classList.add('ativo');
+
+      carregarStats();
+      carregarMensagens();
+      carregarPublishers();
+      carregarProdutos();
+    }
+
+    /* =========================================================
+       SAIR
+       ========================================================= */
+    function sair() {
+      localStorage.removeItem('admin_token');
+      location.reload();
+    }
+
+    /* =========================================================
+       TABS
+       ========================================================= */
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('ativa'));
+        document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa'));
+        tab.classList.add('ativa');
+        const id = tab.dataset.tab;
+        document.getElementById('secao-' + id).classList.add('ativa');
+      });
+    });
+
+    /* =========================================================
+       MODAL
+       ========================================================= */
+    function abrirModal(titulo, texto, callback) {
+      document.getElementById('modalTitulo').textContent = titulo;
+      document.getElementById('modalTexto').textContent = texto;
+      acaoModal = callback;
+      document.getElementById('modal').classList.add('ativo');
+    }
+    function fecharModal() {
+      document.getElementById('modal').classList.remove('ativo');
+      acaoModal = null;
+    }
+    document.getElementById('modalConfirmar').addEventListener('click', () => {
+      if (acaoModal) acaoModal();
+      fecharModal();
+    });
+
+    /* =========================================================
+       STATS
+       ========================================================= */
+    async function carregarStats() {
+      try {
+        const resp = await fetch(API_URL + '/api/admin/stats', {
+          headers: { 'Authorization': 'Bearer ' + TOKEN }
+        });
+
+        if (resp.status === 401) { sair(); return; }
+
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) return;
+
+        document.getElementById('statPublishers').textContent = data.publishers || 0;
+        document.getElementById('statProdutos').textContent = data.produtos || 0;
+        document.getElementById('statLikes').textContent = data.likes || 0;
+        document.getElementById('statMensagens').textContent = data.mensagens || 0;
+
+        // Badge de mensagens
+        const badge = document.getElementById('badgeMsgs');
+        if (data.mensagensNaoLidas > 0) {
+          badge.textContent = data.mensagensNaoLidas;
+          badge.style.display = 'inline-block';
+        } else {
+          badge.style.display = 'none';
+        }
+      } catch (e) {}
+    }
+
+    /* =========================================================
+       MENSAGENS
+       ========================================================= */
+    async function carregarMensagens() {
+      const lista = document.getElementById('listaMensagens');
+      lista.innerHTML = '<div class="loading"><div class="spinner"></div>A carregar...</div>';
+
+      try {
+        const resp = await fetch(API_URL + '/api/admin/mensagens', {
+          headers: { 'Authorization': 'Bearer ' + TOKEN }
+        });
+
+        if (resp.status === 401) { sair(); return; }
+
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) {
+          lista.innerHTML = '<div class="vazio"><div class="vazio-txt">Erro a carregar.</div></div>';
+          return;
+        }
+
+        if (!data.mensagens || data.mensagens.length === 0) {
+          lista.innerHTML = `
+            <div class="vazio">
+              <div class="vazio-emoji">📭</div>
+              <div class="vazio-txt">Nenhuma mensagem ainda.<br>As mensagens do formulário /ajuda.html aparecem aqui.</div>
+            </div>
+          `;
+          return;
+        }
+
+        lista.innerHTML = data.mensagens.map(m => renderMensagem(m)).join('');
+
+      } catch (e) {
+        lista.innerHTML = '<div class="vazio"><div class="vazio-txt">Erro de ligação.</div></div>';
+      }
+    }
+
+    function renderMensagem(m) {
+      return `
+        <div class="item ${m.lida ? 'lida' : ''}">
+          <div class="item-header">
+            <div class="item-img circular">👤</div>
+            <div class="item-info">
+              <div class="item-nome">${escapar(m.nome)}</div>
+              <div class="item-meta">
+                <a href="https://wa.me/${escapar(m.whatsapp)}" target="_blank" rel="noopener" style="color:var(--secundaria);text-decoration:none;font-weight:600">📱 ${escapar(m.whatsapp)}</a>
+                <span>· ${formatarData(m.data)}</span>
+                ${!m.lida ? '<span class="badge-mini">Nova</span>' : ''}
+              </div>
+            </div>
+          </div>
+          <div class="mensagem-corpo">${escapar(m.mensagem)}</div>
+          <div class="item-acoes">
+            <button class="btn-acao verde" onclick="toggleLida(${m.id}, ${!m.lida})">
+              ${m.lida ? '↺ Marcar como nova' : '✓ Marcar como lida'}
+            </button>
+            <a class="btn-acao" href="https://wa.me/${escapar(m.whatsapp)}?text=${encodeURIComponent('Olá ' + m.nome + ', recebi a tua mensagem no Publisher ZonaXP!')}" target="_blank" rel="noopener">💬 Responder</a>
+            <button class="btn-acao perigo" onclick="pedirApagarMsg(${m.id}, '${escapar(m.nome).replace(/'/g,"\\'")}')">🗑️ Apagar</button>
+          </div>
+        </div>
+      `;
+    }
+
+    async function toggleLida(id, lida) {
+      try {
+        const resp = await fetch(API_URL + '/api/admin/mensagens/' + id, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + TOKEN,
+          },
+          body: JSON.stringify({ lida }),
+        });
+
+        if (resp.ok) {
+          toast(lida ? 'Marcada como lida.' : 'Marcada como nova.', 'sucesso');
+          carregarMensagens();
+          carregarStats();
+        }
+      } catch (e) {
+        toast('Erro de ligação.', 'erro');
+      }
+    }
+
+    function pedirApagarMsg(id, nome) {
+      abrirModal('Apagar mensagem?', `Apagar a mensagem de "${nome}"?`, async () => {
+        try {
+          const resp = await fetch(API_URL + '/api/admin/mensagens/' + id, {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + TOKEN }
+          });
+          if (resp.ok) {
+            toast('Mensagem apagada.', 'sucesso');
+            carregarMensagens();
+            carregarStats();
+          } else {
+            toast('Erro ao apagar.', 'erro');
+          }
+        } catch (e) {
+          toast('Erro de ligação.', 'erro');
+        }
+      });
+    }
+
+    /* =========================================================
+       PUBLISHERS
+       ========================================================= */
+    async function carregarPublishers() {
+      const lista = document.getElementById('listaPublishers');
+      lista.innerHTML = '<div class="loading"><div class="spinner"></div>A carregar...</div>';
+
+      try {
+        const resp = await fetch(API_URL + '/api/admin/publishers', {
+          headers: { 'Authorization': 'Bearer ' + TOKEN }
+        });
+
+        if (resp.status === 401) { sair(); return; }
+
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) {
+          lista.innerHTML = '<div class="vazio"><div class="vazio-txt">Erro a carregar.</div></div>';
+          return;
+        }
+
+        if (!data.publishers || data.publishers.length === 0) {
+          lista.innerHTML = '<div class="vazio"><div class="vazio-txt">Nenhum publisher.</div></div>';
+          return;
+        }
+
+        lista.innerHTML = data.publishers.map(p => renderPublisher(p)).join('');
+
+      } catch (e) {
+        lista.innerHTML = '<div class="vazio"><div class="vazio-txt">Erro de ligação.</div></div>';
+      }
+    }
+
+    function renderPublisher(p) {
+      const avatarHtml = p.avatar
+        ? `<div class="item-img circular" style="background-image:url('${escapar(p.avatar)}')"></div>`
+        : `<div class="item-img circular">${escapar(p.nome).charAt(0).toUpperCase()}</div>`;
+
+      const tipoBadge = p.role === 'admin'
+        ? '<span class="badge-mini admin">👑 Admin</span>'
+        : (p.tipo === 'publisher'
+          ? '<span class="badge-mini publisher">🎮 Publisher</span>'
+          : '<span class="badge-mini">🛒 Comprador</span>');
+
+      const podeApagar = p.role !== 'admin';
+
+      return `
+        <div class="item">
+          <div class="item-header">
+            ${avatarHtml}
+            <div class="item-info">
+              <div class="item-nome">${escapar(p.nome)}</div>
+              <div class="item-meta">
+                ${tipoBadge}
+                <span>📱 ${escapar(p.whatsapp)}</span>
+                <span>· ${formatarData(p.dataRegisto)}</span>
+                <span>· ${p.totalProdutos || 0} produtos</span>
+              </div>
+            </div>
+          </div>
+          <div class="item-acoes">
+            <a class="btn-acao" href="/loja.html?slug=${escapar(p.slug)}" target="_blank">👁️ Ver loja</a>
+            ${podeApagar ? `<button class="btn-acao perigo" onclick="pedirApagarPub(${p.id}, '${escapar(p.nome).replace(/'/g,"\\'")}')">🗑️ Apagar</button>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function pedirApagarPub(id, nome) {
+      abrirModal('Apagar publisher?', `Vais apagar "${nome}" e TODOS os seus produtos. Esta ação não pode ser desfeita.`, async () => {
+        try {
+          const resp = await fetch(API_URL + '/api/admin/publishers/' + id, {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + TOKEN }
+          });
+          if (resp.ok) {
+            toast('Publisher apagado.', 'sucesso');
+            carregarPublishers();
+            carregarStats();
+          } else {
+            toast('Erro ao apagar.', 'erro');
+          }
+        } catch (e) {
+          toast('Erro de ligação.', 'erro');
+        }
+      });
+    }
+
+    /* =========================================================
+       PRODUTOS
+       ========================================================= */
+    async function carregarProdutos() {
+      const lista = document.getElementById('listaProdutos');
+      lista.innerHTML = '<div class="loading"><div class="spinner"></div>A carregar...</div>';
+
+      try {
+        const resp = await fetch(API_URL + '/api/admin/jogos', {
+          headers: { 'Authorization': 'Bearer ' + TOKEN }
+        });
+
+        if (resp.status === 401) { sair(); return; }
+
+        const data = await resp.json();
+        if (!resp.ok || !data.ok) {
+          lista.innerHTML = '<div class="vazio"><div class="vazio-txt">Erro a carregar.</div></div>';
+          return;
+        }
+
+        if (!data.jogos || data.jogos.length === 0) {
+          lista.innerHTML = '<div class="vazio"><div class="vazio-txt">Nenhum produto.</div></div>';
+          return;
+        }
+
+        lista.innerHTML = data.jogos.map(j => renderProduto(j)).join('');
+
+      } catch (e) {
+        lista.innerHTML = '<div class="vazio"><div class="vazio-txt">Erro de ligação.</div></div>';
+      }
+    }
+
+    function renderProduto(j) {
+      const imgHtml = j.imagem
+        ? `<div class="item-img" style="background-image:url('${escapar(j.imagem)}')"></div>`
+        : `<div class="item-img">🎮</div>`;
+
+      const isPago = j.tipo === 'pago';
+      const tipoBadge = isPago
+        ? `<span class="badge-mini">💰 ${j.preco} MT</span>`
+        : '<span class="badge-mini gratis">✅ Grátis</span>';
+
+      return `
+        <div class="item">
+          <div class="item-header">
+            ${imgHtml}
+            <div class="item-info">
+              <div class="item-nome">${escapar(j.nome)}</div>
+              <div class="item-meta">
+                ${tipoBadge}
+                <span>${escapar(j.categoria)}</span>
+                ${j.plataforma ? `<span>· ${escapar(j.plataforma)}</span>` : ''}
+                <span>· ❤️ ${j.likes || 0}</span>
+                <span>· por ${escapar(j.nomeLoja || 'Desconhecida')}</span>
+              </div>
+            </div>
+          </div>
+          <div class="item-acoes">
+            <a class="btn-acao" href="/jogo.html?slug=${escapar(j.slug)}" target="_blank">👁️ Ver</a>
+            <button class="btn-acao perigo" onclick="pedirApagarProd(${j.id}, '${escapar(j.nome).replace(/'/g,"\\'")}')">🗑️ Apagar</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function pedirApagarProd(id, nome) {
+      abrirModal('Apagar produto?', `Apagar "${nome}"?`, async () => {
+        try {
+          const resp = await fetch(API_URL + '/api/admin/jogos/' + id, {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + TOKEN }
+          });
+          if (resp.ok) {
+            toast('Produto apagado.', 'sucesso');
+            carregarProdutos();
+            carregarStats();
+          } else {
+            toast('Erro ao apagar.', 'erro');
+          }
+        } catch (e) {
+          toast('Erro de ligação.', 'erro');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

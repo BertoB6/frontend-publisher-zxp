@@ -20,7 +20,7 @@
       background: var(--fundo);
       min-height: 100vh;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       padding: 20px;
       color: var(--texto);
@@ -49,9 +49,9 @@
       background: var(--cards);
       border-radius: 20px;
       border: 1px solid rgba(255,255,255,0.08);
-      padding: 36px 28px;
+      padding: 32px 26px;
       width: 100%;
-      max-width: 400px;
+      max-width: 440px;
       position: relative;
       z-index: 1;
       box-shadow: 0 20px 60px rgba(0,0,0,0.5);
@@ -59,11 +59,11 @@
 
     .logo {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .logo-emoji {
-      font-size: 42px;
-      margin-bottom: 8px;
+      font-size: 40px;
+      margin-bottom: 6px;
     }
     .logo h1 {
       font-size: 22px;
@@ -77,24 +77,79 @@
     .logo p {
       font-size: 13px;
       color: rgba(255,255,255,0.5);
-      margin-top: 6px;
+      margin-top: 4px;
     }
 
-    .info {
-      background: rgba(0,170,255,0.08);
-      border: 1px solid rgba(0,170,255,0.2);
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 12.5px;
-      color: rgba(255,255,255,0.75);
-      margin-bottom: 22px;
-      line-height: 1.5;
+    /* ESCOLHA DE TIPO */
+    .tipos-titulo {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 10px;
+      padding-left: 2px;
     }
-    .info strong {
-      display: block;
+
+    .tipo {
+      background: rgba(0,0,0,0.2);
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      position: relative;
+    }
+    .tipo:hover {
+      border-color: rgba(255,0,170,0.3);
+      background: rgba(0,0,0,0.3);
+    }
+    .tipo.selecionado {
+      border-color: var(--primaria);
+      background: rgba(255,0,170,0.08);
+      box-shadow: 0 0 20px rgba(255,0,170,0.15);
+    }
+    .tipo-emoji {
+      font-size: 24px;
+      flex-shrink: 0;
+      line-height: 1;
+      margin-top: 2px;
+    }
+    .tipo-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .tipo-nome {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--texto);
       margin-bottom: 4px;
-      font-size: 13px;
-      color: var(--secundaria);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tipo-check {
+      color: var(--primaria);
+      font-size: 15px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .tipo.selecionado .tipo-check {
+      opacity: 1;
+    }
+    .tipo-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.45;
+    }
+
+    /* CAMPOS */
+    .campo {
+      margin-bottom: 14px;
     }
 
     label {
@@ -105,10 +160,6 @@
       margin-bottom: 6px;
     }
     label .obrig { color: var(--primaria); margin-left: 2px; }
-
-    .campo {
-      margin-bottom: 16px;
-    }
 
     .input-wrap {
       position: relative;
@@ -134,7 +185,6 @@
       color: rgba(255,255,255,0.3);
     }
 
-    /* Input com botão olho */
     .input-senha {
       padding-right: 46px !important;
     }
@@ -176,7 +226,7 @@
       cursor: pointer;
       transition: all 0.2s;
       font-family: inherit;
-      margin-top: 8px;
+      margin-top: 10px;
       box-shadow: 0 4px 20px rgba(255,0,170,0.3);
       letter-spacing: 0.3px;
     }
@@ -225,7 +275,7 @@
       text-align: center;
       font-size: 12.5px;
       color: rgba(255,255,255,0.4);
-      margin-top: 22px;
+      margin-top: 20px;
     }
     .footer a {
       color: var(--secundaria);
@@ -235,6 +285,21 @@
     }
     .footer a:hover {
       color: var(--primaria);
+    }
+
+    .rodape-voltar {
+      text-align: center;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.3);
+      margin-top: 14px;
+    }
+    .rodape-voltar a {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .rodape-voltar a:hover {
+      color: var(--secundaria);
     }
   </style>
 </head>
@@ -246,16 +311,38 @@
       <p>Junta-te ao mercado Publisher ZonaXP</p>
     </div>
 
-    <div class="info">
-      <strong>💡 Como funciona:</strong>
-      Assim que criares conta, tens a tua loja própria automaticamente.
-      Só precisas de um nome, WhatsApp e uma senha.
-    </div>
-
     <div class="erro" id="erro"></div>
     <div class="sucesso" id="sucesso"></div>
 
-    <form id="formRegisto">
+    <div class="tipos-titulo">Escolhe o tipo de conta</div>
+
+    <div class="tipo selecionado" id="tipoComprador" onclick="escolherTipo('comprador')">
+      <div class="tipo-emoji">🛒</div>
+      <div class="tipo-info">
+        <div class="tipo-nome">
+          Sou comprador
+          <span class="tipo-check">✓</span>
+        </div>
+        <div class="tipo-desc">
+          Crio conta para comprar produtos, ver lojas e contactar vendedores.
+        </div>
+      </div>
+    </div>
+
+    <div class="tipo" id="tipoPublisher" onclick="escolherTipo('publisher')">
+      <div class="tipo-emoji">🎮</div>
+      <div class="tipo-info">
+        <div class="tipo-nome">
+          Sou publisher
+          <span class="tipo-check">✓</span>
+        </div>
+        <div class="tipo-desc">
+          Crio conta para <strong>também vender</strong>. Posso ter uma loja própria e publicar produtos.
+        </div>
+      </div>
+    </div>
+
+    <form id="formRegisto" style="margin-top:20px">
 
       <div class="campo">
         <label for="nome">Nome da loja <span class="obrig">*</span></label>
@@ -291,6 +378,10 @@
     <div class="footer">
       Já tens conta? <a href="/login.html">Entrar</a>
     </div>
+
+    <div class="rodape-voltar">
+      <a href="/index.html">← Voltar ao mercado</a>
+    </div>
   </div>
 
   <script>
@@ -308,9 +399,19 @@
     const erroBox = document.getElementById('erro');
     const sucessoBox = document.getElementById('sucesso');
 
+    let tipoEscolhido = 'comprador';
+
     // Se já tem token → vai para o painel
     if (localStorage.getItem('publisher_token')) {
       window.location.href = '/painel.html';
+    }
+
+    /* ---------- Escolher tipo ---------- */
+    function escolherTipo(tipo) {
+      tipoEscolhido = tipo;
+      document.getElementById('tipoComprador').classList.toggle('selecionado', tipo === 'comprador');
+      document.getElementById('tipoPublisher').classList.toggle('selecionado', tipo === 'publisher');
+      esconder();
     }
 
     /* ---------- Mostrar/ocultar senha ---------- */
@@ -325,7 +426,7 @@
       }
     }
 
-    /* ---------- Mostrar erros/sucesso ---------- */
+    /* ---------- Erro/sucesso ---------- */
     function mostrarErro(msg) {
       erroBox.textContent = msg;
       erroBox.classList.add('ativo');
@@ -342,7 +443,7 @@
       sucessoBox.classList.remove('ativo');
     }
 
-    /* ---------- Normalizar WhatsApp (só dígitos) ---------- */
+    /* ---------- Normalizar WhatsApp ---------- */
     whatsappInput.addEventListener('input', e => {
       e.target.value = e.target.value.replace(/\D/g, '');
     });
@@ -357,7 +458,6 @@
       const senha = senhaInput.value;
       const senha2 = senha2Input.value;
 
-      // Validações no cliente
       if (!nome || nome.length < 3) {
         mostrarErro('O nome da loja tem que ter pelo menos 3 caracteres.');
         return;
@@ -382,7 +482,7 @@
         const resp = await fetch(API_URL + '/api/publisher/registar', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nome, whatsapp, senha }),
+          body: JSON.stringify({ nome, whatsapp, senha, tipo: tipoEscolhido }),
         });
 
         const data = await resp.json();
@@ -394,11 +494,9 @@
           return;
         }
 
-        // Sucesso
         mostrarSucesso('Conta criada com sucesso! A redirecionar para o login...');
         btnRegistar.textContent = 'Conta criada!';
 
-        // Redirecionar para o login com o whatsapp pré-preenchido
         setTimeout(() => {
           window.location.href = '/login.html?wpp=' + encodeURIComponent(whatsapp) + '&novo=1';
         }, 1500);

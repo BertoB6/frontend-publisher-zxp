@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Publicar Jogo — Publisher ZonaXP</title>
+  <title>Publicar — Publisher ZonaXP</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -48,6 +48,7 @@
       font-family: inherit;
       transition: all 0.15s;
       flex-shrink: 0;
+      text-decoration: none;
     }
     .btn-voltar:hover {
       border-color: var(--primaria);
@@ -122,7 +123,6 @@
     }
     textarea.longa {
       min-height: 160px;
-      font-family: inherit;
     }
     select {
       cursor: pointer;
@@ -148,6 +148,59 @@
     @media (max-width: 480px) {
       .grid2 { grid-template-columns: 1fr; gap: 0; }
       .grid2 .campo { margin-bottom: 18px; }
+    }
+
+    /* ESCOLHA PAGO/GRATIS */
+    .tipo-produto {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .tipo-opcao {
+      flex: 1;
+      padding: 14px;
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: rgba(0,0,0,0.2);
+    }
+    .tipo-opcao:hover {
+      border-color: rgba(255,0,170,0.3);
+    }
+    .tipo-opcao.selecionado {
+      border-color: var(--primaria);
+      background: rgba(255,0,170,0.08);
+      box-shadow: 0 0 15px rgba(255,0,170,0.15);
+    }
+    .tipo-opcao-emoji {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+    .tipo-opcao-nome {
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+
+    .preco-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .preco-wrap input {
+      flex: 1;
+    }
+    .moeda {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--secundaria);
+      padding: 12px 14px;
+      background: rgba(0,170,255,0.1);
+      border: 1.5px solid rgba(0,170,255,0.2);
+      border-radius: 10px;
+      flex-shrink: 0;
     }
 
     /* PREVIEW IMAGEM */
@@ -283,8 +336,8 @@
 <body>
 
   <header>
-    <button class="btn-voltar" onclick="window.location.href='/painel.html'">←</button>
-    <h1 id="titulo">Publicar novo jogo</h1>
+    <a class="btn-voltar" href="/painel.html">←</a>
+    <h1 id="titulo">Publicar novo item</h1>
   </header>
 
   <div class="container">
@@ -295,59 +348,96 @@
       <form id="formJogo">
 
         <div class="campo">
-          <label>Nome do jogo <span class="obrig">*</span></label>
+          <label>Nome <span class="obrig">*</span></label>
           <input type="text" id="nome" placeholder="Ex: Mortal Kombat Mod" required>
         </div>
 
         <div class="grid2">
           <div class="campo">
             <label>Categoria <span class="obrig">*</span></label>
-            <input type="text" id="categoria" placeholder="Ex: Luta" required>
+            <select id="categoria" required>
+              <option value="">Escolher...</option>
+              <option value="Jogos">Jogos</option>
+              <option value="Contas">Contas</option>
+              <option value="Diamantes">Diamantes</option>
+              <option value="Recargas">Recargas</option>
+              <option value="Gift Cards">Gift Cards</option>
+              <option value="Assinaturas">Assinaturas</option>
+              <option value="Serviços">Serviços</option>
+              <option value="Outros">Outros</option>
+            </select>
           </div>
           <div class="campo">
-            <label>Plataforma <span class="obrig">*</span></label>
-            <select id="plataforma" required>
-              <option value="">Escolher...</option>
+            <label>Plataforma <span class="opc">(opcional)</span></label>
+            <select id="plataforma">
+              <option value="">— Nenhuma —</option>
               <option value="PSP">PSP</option>
               <option value="PS2">PS2</option>
               <option value="PC">PC</option>
               <option value="APK">APK</option>
+              <option value="Mobile">Mobile</option>
+              <option value="PC/Mobile">PC/Mobile</option>
+              <option value="Multi">Multi</option>
             </select>
           </div>
         </div>
 
+        <!-- PAGO / GRÁTIS -->
         <div class="campo">
-          <label>URL da imagem <span class="obrig">*</span></label>
-          <input type="url" id="imagem" placeholder="https://..." required oninput="atualizarPreview()">
+          <label>Tipo <span class="obrig">*</span></label>
+          <div class="tipo-produto">
+            <div class="tipo-opcao selecionado" id="optGratis" onclick="escolherTipoProduto('gratis')">
+              <div class="tipo-opcao-emoji">✅</div>
+              <div class="tipo-opcao-nome">Grátis</div>
+            </div>
+            <div class="tipo-opcao" id="optPago" onclick="escolherTipoProduto('pago')">
+              <div class="tipo-opcao-emoji">💰</div>
+              <div class="tipo-opcao-nome">Pago</div>
+            </div>
+          </div>
+
+          <div id="precoWrap" class="preco-wrap" style="display:none">
+            <input type="number" id="preco" placeholder="Ex: 250" min="1" step="1">
+            <div class="moeda">MT</div>
+          </div>
+        </div>
+
+        <!-- IMAGEM -->
+        <div class="campo">
+          <label>Imagem (URL) <span class="opc">(opcional)</span></label>
+          <input type="url" id="imagem" placeholder="https://..." oninput="atualizarPreview()">
           <div class="preview" id="preview">Sem imagem</div>
         </div>
 
+        <!-- TAMANHO / SENHA -->
         <div class="grid2">
           <div class="campo">
-            <label>Tamanho <span class="obrig">*</span></label>
-            <input type="text" id="tamanho" placeholder="Ex: 1.2 GB" required>
+            <label>Tamanho <span class="opc">(opcional)</span></label>
+            <input type="text" id="tamanho" placeholder="Ex: 1.2 GB">
           </div>
           <div class="campo">
-            <label>Senha <span class="obrig">*</span></label>
-            <input type="text" id="senha" placeholder="Ex: 1234" required>
+            <label>Senha <span class="opc">(opcional)</span></label>
+            <input type="text" id="senha" placeholder="Ex: 1234">
           </div>
         </div>
 
+        <!-- DOWNLOAD -->
         <div class="campo">
           <label>Link de download <span class="obrig">*</span></label>
           <input type="url" id="download" placeholder="https://mega.nz/..." required>
         </div>
 
+        <!-- DESCRIÇÃO CURTA -->
         <div class="campo">
-          <label>Descrição curta <span class="obrig">*</span></label>
-          <textarea id="descricao_curta" placeholder="Uma linha rápida sobre o jogo." maxlength="200" required></textarea>
+          <label>Descrição curta <span class="opc">(opcional)</span></label>
+          <textarea id="descricao_curta" placeholder="Uma linha rápida sobre o produto." maxlength="200"></textarea>
           <div class="dica">Máximo 200 caracteres. Aparece nos cards do mercado.</div>
         </div>
 
+        <!-- DESCRIÇÃO LONGA -->
         <div class="campo">
-          <label>Descrição longa <span class="obrig">*</span></label>
-          <textarea id="descricao_longa" class="longa" placeholder="Descrição completa.&#10;&#10;- Podes usar várias linhas&#10;- Listas com hífens&#10;- Quebras de linha são preservadas" required></textarea>
-          <div class="dica">Aceita várias linhas. As quebras de linha são preservadas.</div>
+          <label>Descrição longa <span class="opc">(opcional)</span></label>
+          <textarea id="descricao_longa" class="longa" placeholder="Descrição completa.&#10;&#10;- Podes usar várias linhas&#10;- Listas com hífens&#10;- Quebras de linha são preservadas"></textarea>
         </div>
 
         <div class="acoes">
@@ -361,7 +451,7 @@
     <div id="loadingContainer" style="display:none">
       <div class="loading">
         <div class="spinner"></div>
-        A carregar jogo...
+        A carregar...
       </div>
     </div>
   </div>
@@ -383,9 +473,11 @@
     const modoEdicao = !!jogoId;
 
     if (modoEdicao) {
-      document.getElementById('titulo').textContent = 'Editar jogo';
+      document.getElementById('titulo').textContent = 'Editar item';
       document.getElementById('btnGuardar').textContent = 'Guardar alterações';
     }
+
+    let tipoProduto = 'gratis';
 
     const form = document.getElementById('formJogo');
     const card = document.getElementById('card');
@@ -414,6 +506,21 @@
       document.getElementById('erro').classList.remove('ativo');
     }
 
+    /* ---------- Escolher tipo produto ---------- */
+    function escolherTipoProduto(tipo) {
+      tipoProduto = tipo;
+      document.getElementById('optGratis').classList.toggle('selecionado', tipo === 'gratis');
+      document.getElementById('optPago').classList.toggle('selecionado', tipo === 'pago');
+      document.getElementById('precoWrap').style.display = (tipo === 'pago') ? 'flex' : 'none';
+
+      if (tipo === 'pago') {
+        document.getElementById('preco').setAttribute('required', 'required');
+      } else {
+        document.getElementById('preco').removeAttribute('required');
+        document.getElementById('preco').value = '';
+      }
+    }
+
     /* ---------- Preview imagem ---------- */
     function atualizarPreview() {
       const url = document.getElementById('imagem').value.trim();
@@ -438,7 +545,7 @@
       img.src = url;
     }
 
-    /* ---------- Carregar jogo (edição) ---------- */
+    /* ---------- Carregar produto (edição) ---------- */
     async function carregarJogo() {
       card.style.display = 'none';
       loadingContainer.style.display = 'block';
@@ -456,7 +563,7 @@
 
         const data = await resp.json();
         if (!resp.ok) {
-          toast(data.erro || 'Jogo não encontrado.', true);
+          toast(data.erro || 'Item não encontrado.', true);
           setTimeout(() => window.location.href = '/painel.html', 1500);
           return;
         }
@@ -472,10 +579,18 @@
         document.getElementById('descricao_curta').value = j.descricao_curta || '';
         document.getElementById('descricao_longa').value = j.descricao_longa || '';
 
+        // Tipo produto
+        if (j.tipo === 'pago') {
+          escolherTipoProduto('pago');
+          document.getElementById('preco').value = j.preco || '';
+        } else {
+          escolherTipoProduto('gratis');
+        }
+
         atualizarPreview();
 
       } catch (e) {
-        toast('Erro a carregar o jogo.', true);
+        toast('Erro a carregar.', true);
       } finally {
         card.style.display = 'block';
         loadingContainer.style.display = 'none';
@@ -493,7 +608,7 @@
 
       const dados = {
         nome: document.getElementById('nome').value.trim(),
-        categoria: document.getElementById('categoria').value.trim(),
+        categoria: document.getElementById('categoria').value,
         plataforma: document.getElementById('plataforma').value,
         imagem: document.getElementById('imagem').value.trim(),
         tamanho: document.getElementById('tamanho').value.trim(),
@@ -501,7 +616,19 @@
         download: document.getElementById('download').value.trim(),
         descricao_curta: document.getElementById('descricao_curta').value.trim(),
         descricao_longa: document.getElementById('descricao_longa').value,
+        tipo: tipoProduto,
       };
+
+      if (tipoProduto === 'pago') {
+        const preco = parseFloat(document.getElementById('preco').value);
+        if (isNaN(preco) || preco <= 0) {
+          mostrarErro('Preço inválido. Coloca um número maior que 0.');
+          btn.disabled = false;
+          btn.textContent = modoEdicao ? 'Guardar alterações' : 'Publicar';
+          return;
+        }
+        dados.preco = preco;
+      }
 
       try {
         const url = modoEdicao ? API_URL + '/api/jogos/' + jogoId : API_URL + '/api/jogos';
@@ -529,7 +656,7 @@
           return;
         }
 
-        toast(modoEdicao ? 'Alterações guardadas!' : 'Jogo publicado!');
+        toast(modoEdicao ? 'Alterações guardadas!' : 'Item publicado!');
         setTimeout(() => window.location.href = '/painel.html', 800);
 
       } catch (err) {

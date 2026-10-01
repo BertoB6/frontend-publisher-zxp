@@ -116,7 +116,6 @@
       color: rgba(255,255,255,0.3);
     }
 
-    /* Input com botão olho */
     .input-senha {
       padding-right: 46px !important;
     }
@@ -234,7 +233,7 @@
     <div class="logo">
       <div class="logo-emoji">🎮</div>
       <h1>Publisher ZonaXP</h1>
-      <p>Painel dos publishers</p>
+      <p>Entra na tua conta</p>
     </div>
 
     <div class="erro" id="erro"></div>
@@ -279,12 +278,14 @@
     const erroBox = document.getElementById('erro');
     const sucessoBox = document.getElementById('sucesso');
 
-    // Se já tem token → vai direto para o painel
-    if (localStorage.getItem('publisher_token')) {
-      window.location.href = '/painel.html';
+    // Se já tem token → redireciona conforme o role
+    const tokenExistente = localStorage.getItem('publisher_token');
+    if (tokenExistente) {
+      const role = localStorage.getItem('publisher_role') || 'user';
+      window.location.href = (role === 'admin') ? '/admin.html' : '/painel.html';
     }
 
-    /* ---------- Ler query strings (?wpp=...&novo=1) ---------- */
+    /* ---------- Query strings (?wpp=...&novo=1) ---------- */
     const params = new URLSearchParams(window.location.search);
     const wppParam = params.get('wpp');
     const novoParam = params.get('novo');
@@ -309,7 +310,7 @@
       }
     }
 
-    /* ---------- Mostrar erros ---------- */
+    /* ---------- Erros ---------- */
     function mostrarErro(msg) {
       erroBox.textContent = msg;
       erroBox.classList.add('ativo');
@@ -319,7 +320,7 @@
       erroBox.classList.remove('ativo');
     }
 
-    /* ---------- Normalizar WhatsApp (só dígitos) ---------- */
+    /* ---------- Normalizar WhatsApp ---------- */
     whatsappInput.addEventListener('input', e => {
       e.target.value = e.target.value.replace(/\D/g, '');
     });
@@ -360,15 +361,24 @@
           return;
         }
 
-        // Guardar token + dados
+        // Guardar dados
         localStorage.setItem('publisher_token', data.token);
         localStorage.setItem('publisher_nome', data.publisher.nome);
         localStorage.setItem('publisher_slug', data.publisher.slug);
         localStorage.setItem('publisher_id', String(data.publisher.id));
         localStorage.setItem('publisher_whatsapp', data.publisher.whatsapp);
+        localStorage.setItem('publisher_role', data.publisher.role || 'user');
+        localStorage.setItem('publisher_tipo', data.publisher.tipo || 'comprador');
 
-        // Ir para o painel
-        window.location.href = '/painel.html';
+        // Redirecionar conforme o role
+        if (data.publisher.role === 'admin') {
+          window.location.href = '/admin.html';
+        } else if (data.publisher.tipo === 'publisher') {
+          window.location.href = '/painel.html';
+        } else {
+          // Comprador (sem painel ainda) → vai à home
+          window.location.href = '/index.html';
+        }
 
       } catch (err) {
         mostrarErro('Erro de ligação ao servidor.');
